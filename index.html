@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Phaser 3 Game </title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 618,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 0 },
+                debug: false
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var player;
+    var platforms;
+    var cursors;
+    var playerSelected = [null, 0, 0];
+    var objectIsSelected = false;
+    var playerMoving = false;
+    var movingTo = [0, 0];
+    var movingUp = false;
+    var movingRight = false;
+    var movingDown = false;
+    var movingLeft = false;
+    var tileSelected = null;
+    var tileIsSelected = false;
+    let availableMoves;
+    let starGroup;
+    let destination;
+
+
+    var grid =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
+    //grid[22][3] = 1;
+    //grid[21][12] = 2;
+
+    var heroStart = [5, 25];
+
+    //console.log(heroStart[0]);
+
+    grid[heroStart[1]][heroStart[0]] = 1;
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+        this.load.image('sky', 'assets/sky.png');
+        this.load.image('ground', 'assets/platform.png');
+        this.load.image('star', 'assets/star.png');
+        this.load.image('bomb', 'assets/bomb.png');
+        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.image('spark', 'assets/blue.png');
+        this.load.image('levelOne', 'assets/grid2.png');
+    }
+
+    function create ()
+    {
+        starGroup = this.add.group();
+
+        //console.log(gridData[0].length);
+        //console.log(gridData.length);
+
+        this.add.image(504, 316, 'levelOne');
+
+        // var emitter = this.add.particles('spark').createEmitter({
+        //     x: 400,
+        //     y: 300,
+        //     blendMode: 'SCREEN',
+        //     scale: { start: 0.05, end: 0 },
+        //     speed: { min: -100, max: 100 },
+        //     quantity: 15
+        // });
+
+        // emitter.setEmitZone({
+        //     source: new Phaser.Geom.Circle(0, 0, 15),
+        //     type: 'edge',
+        //     quantity: 50
+        // });
+
+
+        // platforms = this.physics.add.staticGroup();
+
+        // platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
+        // platforms.create(600, 400, 'ground');
+        // platforms.create(50, 250, 'ground');
+        // platforms.create(750, 220, 'ground');
+
+        let startingCoordinates = calculateCoordinates([heroStart[0], heroStart[1]]);
+
+        player = this.physics.add.sprite(startingCoordinates[0], startingCoordinates[1] - 15, 'dude');
+//        star = this.physics.add.sprite(400, 450, 'star');
+
+
+ //       star.setCollideWorldBounds(true);
+
+        //player.setBounce(0);
+       // player.setCollideWorldBounds(true);
+
+        player.setInteractive();
+ //       star.setInteractive();
+
+        player.on('clicked', clickFunc, this);
+
+        player.depth = 2;
+
+ //       star.on('clicked', clickFunc, this);
+
+        this.input.on('gameobjectup', function (pointer, gameObject)
+        {
+            gameObject.emit('clicked', gameObject);
+        }, this);
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [ { key: 'dude', frame: 4 } ],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        this.physics.add.collider(player, platforms);
+
+        this.input.on('pointerdown', function (pointer)
+        {
+
+
+            let hexClicked = determineWhichHex(pointer.x, pointer.y);
+
+            if (!playerMoving) {
+
+                if (tileIsSelected === false) {
+
+                    if (tileCanBeSelected(hexClicked)) {
+
+                        tileSelected = hexClicked;
+                        tileIsSelected = true;
+                        //console.log("This worked too");
+
+                        //let coordinates = calculateCoordinates([2, 24]);
+                        let coordinates;
+
+                        availableMoves = generateAvailableMoves(heroStart, 5);
+
+                       // console.log(availableMoves);
+
+
+                        //displayAvailableMoves(tileSelected, 3);
+
+                        //let xCoordinate = (hexClicked[0] + 1) * 30;
+                        //let yCoordinate = ((hexClicked[1] - 0) * 3/4 * 28) - 5;
+
+                        //console.log("hexClicked[1] = ", hexClicked[1]);
+
+                        //console.log("xCoor = ", xCoordinate, "yCoor = ", yCoordinate);
+
+                        //console.log("Over Here ", availableMoves.length)
+
+                        for (let i = 0; i < availableMoves.length; i++) {
+
+                            coordinates = calculateCoordinates(availableMoves[i]);
+                            // star = this.physics.add.sprite(coordinates[0], coordinates[1], 'star');
+                            // star.depth = 1;
+
+                            starGroup.create(coordinates[0], coordinates[1], 'star');
+                        }
+
+                       // star = this.physics.add.sprite(coordinates[0], coordinates[1], 'star');
+
+
+
+                    }
+                } else {
+
+                    if (arrayIncludesCoordinates(availableMoves, hexClicked)) {
+                        console.log("AwesomeSauce");
+
+                        //player.x = calculateCoordinates(hexClicked)[0];
+                        //player.y = calculateCoordinates(hexClicked)[1] - 15;
+
+                        tileIsSelected = false;
+
+                        //star.getChildren().map(child => child.destroy());
+
+                        //console.log("Blah", star);
+                        //star.visible = false;
+                        //star.destroy();
+
+                        console.log(starGroup);
+
+                        //starGroup.clear(true, true);
+
+                        starGroup.getChildren().forEach(function(elm) {
+                            if (elm.active) {
+                                elm.destroy();
+                            }
+                           //elm.clear(false, true);
+                        });
+
+                        starGroup.clear();
+
+                        playerMoving = true;
+
+                        let heroStartCoor = calculateCoordinates(heroStart);
+                        let hexClickedCoor = calculateCoordinates(hexClicked);
+
+
+                        if (heroStartCoor[0] < hexClickedCoor[0]) {
+
+                            player.setVelocityX(160)
+                            player.anims.play('right', true);
+                            movingRight = true;
+
+                        } else {
+
+                            player.setVelocityX(-160);
+                            player.anims.play('left', true);
+                            movingLeft = true;
+
+                        }
+
+                        console.log("!!!!!", heroStartCoor[1], hexClickedCoor[1]);
+
+                        if (heroStartCoor[1] > hexClickedCoor[1]) {
+
+                            console.log("got here");
+
+                            player.setVelocityY(-200);
+                            movingUp = true;
+
+                        } else if (heroStartCoor[1] < hexClickedCoor[1]) {
+
+                            console.log("ABSD");
+
+                            player.setVelocityY(200);
+                            movingDown = true;
+                        }
+
+                        grid[heroStart[1]][heroStart[0]] = 0;
+                        heroStart = hexClicked;
+                        destination = hexClicked;
+                        grid[hexClicked[1]][hexClicked[0]] = 1;
+                    }
+
+                }
+
+            }
+            // console.log("AAA", playerSelected[0]);
+            // if (playerSelected[0] && objectIsSelected)
+            // {
+
+
+
+            //     movingTo[0] = pointer.x;
+            //     movingTo[1] = pointer.y;
+
+
+            //     if (playerSelected[1] < movingTo[0]) {
+            //         movingRight = true;
+            //     }
+
+
+
+            //     if (playerSelected[1] > movingTo[0]) {
+            //         //console.log("playerSelected[1] = ",playerSelected[1], "movingTo=", movingTo[0]);
+            //         movingLeft = true;
+            //     }
+
+            //     // if (playerSelected[2] > movingTo[1]) {
+            //     //     movingDown = true;
+            //     // }
+
+
+            //     // console.log("Feeling it");
+
+            //     // player.setVelocityX(160);
+
+            //     // player.anims.play('right', true);
+
+            //     playerMoving = true;
+            //     objectIsSelected = false;
+
+            //    // console.log("second moving to of x = ", movingTo[0]);
+
+           // }
+            console.log(pointer.x, pointer.y);
+
+        }, this);
+
+    }
+
+    function update ()
+    {
+
+        if (playerMoving) {
+
+            let coordinates = calculateCoordinates(destination);
+
+            if (movingRight) {
+
+
+
+                if (player.x > coordinates[0]) {
+                    player.setVelocityX(0);
+                    movingRight = false;
+                   // player.anims.play('turn')
+                }
+
+            }
+
+            if (movingUp) {
+
+                if (player.y < coordinates[1]) {
+                    player.setVelocityY(0);
+                    movingUp = false;
+                }
+            }
+
+            if (movingLeft) {
+
+                if (player.x < coordinates[0]) {
+
+                    player.setVelocityX(0);
+                    movingLeft = false;
+                }
+            }
+
+            if (movingDown) {
+
+                if (player.y > coordinates[1] - 15) {
+
+                    player.setVelocityY(0);
+                    movingDown = false;
+                }
+            }
+
+            if (!movingUp && !movingRight && !movingLeft && !movingDown) {
+
+                player.x = coordinates[0];
+                player.y = coordinates[1] - 15;
+                playerMoving = false;
+
+                console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
+
+                player.anims.stop();
+
+                console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
+            }
+
+        }
+        // // if (  cursors.left.isDown)
+        // // {
+        // //     player.setVelocityX(-160);
+
+        // //     player.anims.play('left', true);
+        // // }
+        // // else if (cursors.right.isDown)
+        // // {
+        // //     player.setVelocityX(160);
+
+        // //     player.anims.play('right', true);
+        // // }
+        // // else
+        // // {
+        // //    // player.setVelocityX(0);
+
+        // //    // player.anims.play('turn');
+        // // }
+
+        // // if (cursors.up.isDown)
+        // // {
+        // //     player.setVelocityY(-160);
+        // // }
+        // // else
+        // // {
+        // //     //player.setVelocityY(0);
+        // // }
+
+        // // if (cursors.down.isDown)
+        // // {
+        // //     player.setVelocityY(160);
+        // //     //console.log("Hello");
+        // // }
+
+        // // if (!cursors.down.isDown && !cursors.up.isDown)
+        // // {
+        // //     //player.setVelocityY(0);
+        // // }
+
+        // if (playerSelected[0] !== null) {
+
+        //     if (movingRight === true)
+        //     {
+
+        //         console.log(playerSelected[0]);
+
+        //         playerSelected[0].setVelocityX(160);
+        //         //playerSelected[0].anims.play('right', true);
+
+        //         //console.log("mright");
+        //         //playerMoving = false;
+
+        //         if (playerSelected[0].x >= movingTo[0]) {
+        //             movingRight = false;
+        //             console.log("x coordinates equal");
+        //            // playerSelected[0].anims.play('turn');
+        //             if (playerSelected[0]) playerSelected[0].setVelocityX(0);
+        //           //  playerSelected[0] = false;
+
+
+        //             if (playerSelected[2] > movingTo[1]) {
+        //                 movingUp = true;
+        //             }
+
+        //             else if (playerSelected[2] < movingTo[1]) {
+        //                 movingDown = true;
+        //             }
+
+        //             else {
+        //                 playerSelected[0] = null;
+        //             }
+        //         }
+        //     }
+
+        //     if (movingUp === true)
+        //     {
+
+        //         playerSelected[0].setVelocityY(-160);
+
+        //         if (playerSelected[0].y <= movingTo[1]) {
+        //             movingUp = false;
+        //             console.log("Y coordinates are equal");
+        //           //  player.anims.play('turn');
+        //             if (playerSelected[0]) playerSelected[0].setVelocityY(0);
+        //             playerSelected[0] = null;
+        //         }
+        //     }
+
+        //     if (movingLeft === true)
+        //     {
+
+        //         //playerSelected[0] = player;
+        //         if (playerSelected[0]) playerSelected[0].setVelocityX(-160);
+        //        // player.anims.play('left', true);
+
+        //         if (playerSelected[0].x <= movingTo[0]) {
+
+        //             movingLeft = false;
+        //             if (playerSelected[0]) playerSelected[0].setVelocityX(0);
+        //           //  playerSelected[0] = {};
+
+        //             if (playerSelected[2] > movingTo[1]) {
+        //                 movingUp = true;
+        //             }
+
+        //             else if (playerSelected[2] < movingTo[1]) {
+        //                 movingDown = true;
+        //             }
+
+        //             else {
+        //                 playerSelected[0] = null;
+        //             }
+
+
+        //         }
+        //         //playerMoving = false;
+        //        // console.log("mleft");
+        //     }
+
+        //     if (movingDown === true)
+        //     {
+
+
+        //         playerSelected[0].setVelocityY(160);
+        //         // player.anims.play('turn');
+        //         // playerMoving = false;
+        //         if (playerSelected[0].y >= movingTo[1]) {
+        //             movingDown = false;
+        //             console.log("Y coordinates are equal");
+        //           //  player.anims.play('turn');
+
+        //             playerSelected[0].setVelocityY(0);
+
+        //             playerSelected[0] = null;
+
+        //         }
+        //     }
+
+        //     // if (this.input.on('pointerdown')) {
+        //     //     console.log("Spoon");
+        //     // }
+
+        //     //console.log("player.x = ", player.x);
+
+        //     //console.log("moving down is", movingDown);
+
+       // }
+    }
+
+    function clickFunc(player)
+    {
+       // player.off('clicked', clickFunc);
+        console.log("Boom!");
+        console.log(player.x, player.y);
+        //console.log(player);
+
+        playerSelected = [player, player.x, player.y];
+        objectIsSelected = true;
+    }
+
+    function determineWhichHex(pointx, pointy) {
+
+        // let tempX = Math.floor(pointx / 30);
+        // let tempY = Math.floor(pointy / 30);
+        // console.log("tempX = ", tempX);
+        // console.log("tempY = ", tempY);
+
+        // let modX = pointx % 30;
+        // let modY = pointy % 30;
+
+        // console.log("modX = ", modX);
+        // console.log("modY = ", modY);
+
+        // if (modY > 22) {
+        //     if (modY - 22 > (modX - 15) * 2) {
+        //         console.log("Bingo!");
+        //     }
+        //     else {
+        //         console.log("Outside!");
+        //     }
+        // }
+
+        //var pos=game.input.activePointer.position;
+      // pos.x-=hexGrid.x;
+      // pos.y-=hexGrid.y;
+    // var xVal = Math.floor((pointx)/30);
+    // var yVal = Math.floor((pointy)/(28*3/4));
+    // var dX = (pointx)%30;
+    // var dY = (pointy)%(28*3/4);
+    // var slope = (28/4)/(30/2);
+    // var caldY=dX*slope;
+    // var delta=28/4-caldY;
+
+    // if(yVal%2===0){
+    //    //correction needs to happen in triangular portions & the offset rows
+    //    if(Math.abs(delta)>dY){
+    //        if(delta>0){//odd row bottom right half
+    //             xVal--;
+    //             yVal--;
+    //        }else{//odd row bottom left half
+    //             yVal--;
+    //        }
+    //    }
+    // }else{
+    //     if(dX>30/2){// available values don't work for even row bottom right half
+    //         if(dY<((28/2)-caldY)){//even row bottom right half
+    //             yVal--;
+    //         }
+    //     }else{
+    //        if(dY>caldY){//odd row top right & mid right halves
+    //            xVal--;
+    //        }else{//even row bottom left half
+    //            yVal--;
+    //        }
+    //     }
+    // }
+
+    // console.log("yVal = ", yVal, "xVal = ", xVal);
+
+          var hexagonWidth = 30;
+          var hexagonHeight = 28;
+          var sectorWidth = hexagonWidth;
+          var sectorHeight = hexagonHeight/4*3;
+          var gradient = (hexagonHeight/4)/(hexagonWidth/2);
+          var candidateX = Math.floor((pointx)/sectorWidth);
+          var candidateY = Math.floor((pointy)/sectorHeight);
+          var deltaX = (pointx)%sectorWidth;
+          var deltaY = (pointy)%sectorHeight;
+          if(candidateY%2==0){
+               if(deltaY<((hexagonHeight/4)-deltaX*gradient)){
+                    candidateX--;
+                    candidateY--;
+               }
+               if(deltaY<((-hexagonHeight/4)+deltaX*gradient)){
+                    candidateY--;
+               }
+          }
+          else{
+               if(deltaX>=hexagonWidth/2){
+                    if(deltaY<(hexagonHeight/2-deltaX*gradient)){
+                         candidateY--;
+                    }
+               }
+               else{
+                    if(deltaY<deltaX*gradient){
+                         candidateY--;
+                    }
+                    else{
+                         candidateX--;
+                    }
+               }
+          }
+
+        console.log("candidateX = ", candidateX);
+        console.log("candidateY = ", candidateY);
+
+        return [candidateX, candidateY];
+
+    }
+
+    function tileCanBeSelected(hex) {
+
+        let output = false;
+
+        if (grid[hex[1]][hex[0]] === 1) {
+
+            console.log("You're the man now Dog");
+            output = true;
+        }
+
+        return output;
+    }
+
+    // function displayAvailableMoves(hex, movePoints) {
+
+    //     // generate array of availabe moves
+
+    //     let xCoordinate = hex[0] * 30;
+    //     let yCoordinate = hex[1] * 28;
+
+    //     star = this.physics.add.sprite(xCoordinate, yCoordinate, 'star');
+
+
+    // }
+
+    function calculateCoordinates(hex) {
+
+        let x;
+        let y = (hex[1] * 28 * 3/4) + 15;
+
+        if (hex[1] % 2 === 0) {
+            x = (hex[0] * 30) + 15;
+        }
+
+        else {
+            x = (hex[0] * 30) + 30;
+        }
+
+        return [x, y];
+
+    }
+
+    function generateAvailableMoves(position, movePoints) {
+        let output = [];
+
+        getMoves(position, movePoints);
+
+        function getMoves(position, movePoints) {
+
+            //console.log("getMoves called");
+
+            if (movePoints === 0) return;
+
+            //if (position[1] > grid[0].length) return;
+            //if (position[0] > grid.length) return;
+
+              // We must check wether it is an odd or even row before we calculate moving in
+              // various directions because of the way hex grid numbering lines up with
+              // an array of arrays.  (IE moving up and to the left is a different calculation
+              // if you start in an odd or even row.  )
+
+            if (position[1] === 0 || position[1] % 2 === 0) {
+
+            //Up and to the left... even rows  (odd-r horizontal lay-out)
+
+                if (position[0] - 1 >= 0 && position[1] - 1 >= 0) {
+
+                    if (grid[position[1] - 1][position[0] - 1] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1] - 1])) {
+                            output.push([position[0] - 1, position[1] - 1]);
+                        }
+                        getMoves([position[0] - 1, position[1] - 1], movePoints - 1);
+
+                    }
+
+                    else if (grid[position[1] - 1][position[0] - 1] === 1) {
+                        getMoves([position[0] - 1, position[1] - 1], movePoints - 1);
+                    }
+
+                }
+
+
+                //Up and to the right, even row
+
+                if (position[1] - 1 >= 0) {
+
+                    if (grid[position[1] - 1][position[0]] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0], position[1] - 1])) {
+                            output.push([position[0], position[1] - 1]);
+                        }
+                        getMoves([position[0], position[1] - 1], movePoints - 1);
+                    }
+
+                    else if (grid[position[1] - 1][position[0]] === 1) {
+                        getMoves([position[0], position[1] - 1], movePoints - 1);
+                    }
+                }
+
+                  //Left, even row
+
+
+                if (position[0] - 1 >= 0) {
+
+                    if (grid[position[1]][position[0] - 1] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1]])) {
+                            output.push([position[0] - 1, position[1]]);
+                        }
+                        getMoves([position[0] - 1, position[1]], movePoints - 1);
+                    }
+
+                    else if (grid[position[1]][position[0] - 1] === 1) {
+                        getMoves([position[0] - 1, position[1]], movePoints - 1);
+                    }
+
+                }
+
+                  //Down and to the left, even row
+
+                // console.log("movepoints = ", movePoints, "position=", position[0] - 1, position[1] + 1);
+                // console.log("grid shit = ", grid[position[0] - 1][position[1] + 1]);
+                // console.log("blah", grid[27][0]);
+
+                if (position[0] - 1 >= 0 && position[1] + 1 <= grid.length - 1) {
+                    if (grid[position[1] + 1][position[0] - 1] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1] + 1])) {
+                            output.push([position[0] - 1, position[1] + 1]);
+                        }
+                        getMoves([position[0] - 1, position[1] + 1], movePoints - 1);
+                    }
+
+                    else if (grid[position[0] - 1][position[1] + 1] === 1) {
+                        getMoves([position[0] - 1, position[1] + 1], movePoints - 1);
+                    }
+                }
+
+                  //Down and to the right, even row
+                if (position[1] + 1 <= grid.length - 1) {
+                    if (grid[position[1] + 1][position[0]] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0], position[1] + 1])) {
+                            output.push([position[0], position[1] + 1]);
+                        }
+
+                        getMoves([position[0], position[1] + 1], movePoints - 1);
+                    }
+
+
+                    else if (grid[position[1] + 1][position[0]] === 0) {
+                        getMoves([position[0], position[1] + 1], movePoints - 1);
+                    }
+
+                }
+
+                  //Right, even row
+                if (position[0] + 1 <= grid[0].length - 1) {
+                    if (grid[position[1]][position[0] + 1] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1]])) {
+                            output.push([position[0] + 1, position[1]]);
+                        }
+                        getMoves([position[0] + 1, position[1]], movePoints - 1);
+                    }
+
+                    else if (grid[position[1]][position[0] + 1] === 1) {
+                        getMoves([position[0] + 1, position[1]], movePoints - 1);
+                    }
+
+                }
+
+            }
+
+              // even rows logic starts here
+            else {
+
+                  //Up and to the Left, odd row
+
+                if (position[1] - 1 >= 0) {
+                    if (grid[position[1] - 1][position[0]] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0], position[1] - 1])) {
+                            output.push([position[0], position[1] - 1]);
+                        }
+                        getMoves([position[0], position[1] - 1], movePoints - 1);
+                    }
+                    else if (grid[position[1] - 1][position[0]] === 1) {
+                        getMoves([position[0], position[1] - 1], movePoints - 1);
+                    }
+                }
+
+                //Up and to the right, odd row
+
+                if (position[1] - 1 >= 0) {
+
+                    if (grid[position[1] - 1][position[0] + 1] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1] - 1])) {
+                            output.push([position[0] + 1, position[1] - 1]);
+                        }
+                        getMoves([position[0] + 1, position[1] - 1], movePoints - 1);
+                    }
+                    else if (grid[position[1] - 1][position[0] + 1] === 1) {
+                        getMoves([position[0] + 1, position[1] - 1], movePoints - 1);
+                    }
+                }
+
+                   //Left, odd row
+
+                if (position[0] - 1 >= 0) {
+                    if (grid[position[1]][position[0] - 1] === 0) {
+                        if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1]])) {
+                            output.push([position[0] - 1, position[1]]);
+                        }
+                        getMoves([position[0] - 1, position[1]], movePoints - 1);
+                    }
+                    else if (grid[position[1]][position[0] - 1] === 1) {
+                        getMoves([position[0] - 1, position[1]], movePoints - 1);
+                    }
+                }
+
+                //console.log("movepoints = ", movePoints, "position =", position[0], position[1] + 1);
+                //console.log("grid shit = ", grid[position[0]][position[1] + 1]);
+
+                  //Down and to the left, odd row
+                if (grid[position[1] + 1][position[0]] === 0) {
+                    if (!arrayIncludesCoordinates(output, [position[0], position[1] + 1])) {
+                        output.push([position[0], position[1] + 1]);
+                    }
+
+                    getMoves([position[0], position[1] + 1], movePoints - 1);
+                }
+
+                else if (grid[position[1] + 1][position[0]] === 1) {
+                    getMoves([position[0], position[1] + 1], movePoints - 1);
+                }
+
+                  //Down and to the right, odd row
+                if (grid[position[1] + 1][position[0] + 1] === 0) {
+                    if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1] + 1])) {
+                        output.push([position[0] + 1, position[1] + 1]);
+                    }
+                    getMoves([position[0] + 1, position[1] + 1], movePoints - 1);
+                }
+
+                else if (grid[position[1] + 1][position[0] + 1] === 1) {
+                    getMoves([position[0] + 1, position[1] + 1], movePoints - 1);
+                }
+
+                  //Right, odd row
+                if (grid[position[1]][position[0] + 1] === 0) {
+                    if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1]])) {
+                        output.push([position[0] + 1, position[1]]);
+                    }
+                    getMoves([position[0] + 1, position[1]], movePoints - 1);
+                }
+
+                else if (grid[position[1]][position[0] + 1] === 0) {
+                    getMoves([position[0] + 1, position[1]], movePoints - 1);
+                }
+            }
+        }
+        return output;
+    }
+
+    function arrayIncludesCoordinates(array, coordinates) {
+
+        output = false;
+
+        for (let i = 0; i < array.length; i++) {
+            if (array[i][0] === coordinates[0]) {
+                if (array[i][1] === coordinates[1]) {
+                    output = true;
+                }
+            }
+        }
+
+        return output;
+    }
+
+</script>
+
+</body>
+</html>
