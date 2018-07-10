@@ -84,10 +84,13 @@
     //grid[21][12] = 2;
 
     var heroStart = [5, 25];
+    var enemyStart = [20, 5];
 
     //console.log(heroStart[0]);
 
     grid[heroStart[1]][heroStart[0]] = 1;
+    grid[enemyStart[1]][enemyStart[0]] = 2;
+
 
     var game = new Phaser.Game(config);
 
@@ -136,8 +139,14 @@
         // platforms.create(750, 220, 'ground');
 
         let startingCoordinates = calculateCoordinates([heroStart[0], heroStart[1]]);
+        let enemyStarCoor = calculateCoordinates([enemyStart[0], enemyStart[1]]);
 
         player = this.physics.add.sprite(startingCoordinates[0], startingCoordinates[1] - 15, 'dude');
+
+        enemy = this.physics.add.sprite(enemyStarCoor[0], enemyStarCoor[1] - 15, 'dude');
+        enemy.setTint(0xff0000);
+        enemy.depth = 2;
+
 //        star = this.physics.add.sprite(400, 450, 'star');
 
 
@@ -373,7 +382,7 @@
 
             if (movingUp) {
 
-                if (player.y < coordinates[1]) {
+                if (player.y < coordinates[1] - 10) {
                     player.setVelocityY(0);
                     movingUp = false;
                 }
@@ -390,7 +399,7 @@
 
             if (movingDown) {
 
-                if (player.y > coordinates[1] - 15) {
+                if (player.y > coordinates[1] - 20) {
 
                     player.setVelocityY(0);
                     movingDown = false;
