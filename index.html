@@ -48,6 +48,7 @@
     let availableMoves;
     let starGroup;
     let destination;
+    let testCoor;
 
 
     var grid =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -355,7 +356,7 @@
             //    // console.log("second moving to of x = ", movingTo[0]);
 
            // }
-            console.log(pointer.x, pointer.y);
+            console.log("spaz", pointer.x, pointer.y);
 
         }, this);
 
@@ -372,7 +373,7 @@
 
 
 
-                if (player.x > coordinates[0]) {
+                if (player.x > coordinates[0] - 4) {
                     player.setVelocityX(0);
                     movingRight = false;
                    // player.anims.play('turn')
@@ -390,7 +391,7 @@
 
             if (movingLeft) {
 
-                if (player.x < coordinates[0]) {
+                if (player.x < coordinates[0] + 4) {
 
                     player.setVelocityX(0);
                     movingLeft = false;
@@ -408,15 +409,24 @@
 
             if (!movingUp && !movingRight && !movingLeft && !movingDown) {
 
-                player.x = coordinates[0];
-                player.y = coordinates[1] - 15;
-                playerMoving = false;
-
-                console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
+                //timedEvent = this.time.delayedCall(1000);
 
                 player.anims.stop();
 
-                console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
+               // player.x = coordinates[0];
+               // player.y = coordinates[1] - 15;
+                playerMoving = false;
+
+                //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
+
+                testCoor = coordinates;
+
+
+                timedEvent = this.time.delayedCall(20, adjustUnitPos, [], this);
+
+                //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
+
+                console.log("Player.x = ", player.x, "Player.y = ", player.y);
             }
 
         }
@@ -572,12 +582,12 @@
     function clickFunc(player)
     {
        // player.off('clicked', clickFunc);
-        console.log("Boom!");
-        console.log(player.x, player.y);
+      //  console.log("Boom!");
+        console.log("clickfunc", player.x, player.y);
         //console.log(player);
 
-        playerSelected = [player, player.x, player.y];
-        objectIsSelected = true;
+       // playerSelected = [player, player.x, player.y];
+       // objectIsSelected = true;
     }
 
     function determineWhichHex(pointx, pointy) {
@@ -952,6 +962,11 @@
         }
 
         return output;
+    }
+
+    function adjustUnitPos () {
+        player.x = testCoor[0];
+        player.y = testCoor[1] - 15;
     }
 
 </script>
