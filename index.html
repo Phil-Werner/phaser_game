@@ -49,6 +49,7 @@
     let starGroup;
     let destination;
     let testCoor;
+    let playersTurn = true;
 
 
     var grid =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -84,7 +85,7 @@
     //grid[22][3] = 1;
     //grid[21][12] = 2;
 
-    var heroStart = [5, 25];
+    var heroStart = [19, 2];
     var enemyStart = [20, 5];
 
     //console.log(heroStart[0]);
@@ -200,124 +201,129 @@
 
             let hexClicked = determineWhichHex(pointer.x, pointer.y);
 
-            if (!playerMoving) {
+            if (playersTurn) {
 
-                if (tileIsSelected === false) {
+                if (!playerMoving) {
 
-                    if (tileCanBeSelected(hexClicked)) {
+                    if (tileIsSelected === false) {
 
-                        tileSelected = hexClicked;
-                        tileIsSelected = true;
-                        //console.log("This worked too");
+                        if (tileCanBeSelected(hexClicked)) {
 
-                        //let coordinates = calculateCoordinates([2, 24]);
-                        let coordinates;
+                            tileSelected = hexClicked;
+                            tileIsSelected = true;
+                            //console.log("This worked too");
 
-                        availableMoves = generateAvailableMoves(heroStart, 5);
+                            //let coordinates = calculateCoordinates([2, 24]);
+                            let coordinates;
 
-                       // console.log(availableMoves);
+                            availableMoves = generateAvailableMoves(heroStart, 5);
 
-
-                        //displayAvailableMoves(tileSelected, 3);
-
-                        //let xCoordinate = (hexClicked[0] + 1) * 30;
-                        //let yCoordinate = ((hexClicked[1] - 0) * 3/4 * 28) - 5;
-
-                        //console.log("hexClicked[1] = ", hexClicked[1]);
-
-                        //console.log("xCoor = ", xCoordinate, "yCoor = ", yCoordinate);
-
-                        //console.log("Over Here ", availableMoves.length)
-
-                        for (let i = 0; i < availableMoves.length; i++) {
-
-                            coordinates = calculateCoordinates(availableMoves[i]);
-                            // star = this.physics.add.sprite(coordinates[0], coordinates[1], 'star');
-                            // star.depth = 1;
-
-                            starGroup.create(coordinates[0], coordinates[1], 'star');
-                        }
-
-                       // star = this.physics.add.sprite(coordinates[0], coordinates[1], 'star');
+                           // console.log(availableMoves);
 
 
+                            //displayAvailableMoves(tileSelected, 3);
 
-                    }
-                } else {
+                            //let xCoordinate = (hexClicked[0] + 1) * 30;
+                            //let yCoordinate = ((hexClicked[1] - 0) * 3/4 * 28) - 5;
 
-                    if (arrayIncludesCoordinates(availableMoves, hexClicked)) {
-                        console.log("AwesomeSauce");
+                            //console.log("hexClicked[1] = ", hexClicked[1]);
 
-                        //player.x = calculateCoordinates(hexClicked)[0];
-                        //player.y = calculateCoordinates(hexClicked)[1] - 15;
+                            //console.log("xCoor = ", xCoordinate, "yCoor = ", yCoordinate);
 
-                        tileIsSelected = false;
+                            //console.log("Over Here ", availableMoves.length)
 
-                        //star.getChildren().map(child => child.destroy());
+                            for (let i = 0; i < availableMoves.length; i++) {
 
-                        //console.log("Blah", star);
-                        //star.visible = false;
-                        //star.destroy();
+                                coordinates = calculateCoordinates(availableMoves[i]);
+                                // star = this.physics.add.sprite(coordinates[0], coordinates[1], 'star');
+                                // star.depth = 1;
 
-                        console.log(starGroup);
-
-                        //starGroup.clear(true, true);
-
-                        starGroup.getChildren().forEach(function(elm) {
-                            if (elm.active) {
-                                elm.destroy();
+                                starGroup.create(coordinates[0], coordinates[1], 'star');
                             }
-                           //elm.clear(false, true);
-                        });
 
-                        starGroup.clear();
-
-                        playerMoving = true;
-
-                        let heroStartCoor = calculateCoordinates(heroStart);
-                        let hexClickedCoor = calculateCoordinates(hexClicked);
+                           // star = this.physics.add.sprite(coordinates[0], coordinates[1], 'star');
 
 
-                        if (heroStartCoor[0] < hexClickedCoor[0]) {
-
-                            player.setVelocityX(160)
-                            player.anims.play('right', true);
-                            movingRight = true;
-
-                        } else {
-
-                            player.setVelocityX(-160);
-                            player.anims.play('left', true);
-                            movingLeft = true;
 
                         }
+                    } else {
 
-                        console.log("!!!!!", heroStartCoor[1], hexClickedCoor[1]);
+                        if (arrayIncludesCoordinates(availableMoves, hexClicked)) {
+                            console.log("AwesomeSauce");
 
-                        if (heroStartCoor[1] > hexClickedCoor[1]) {
+                            //player.x = calculateCoordinates(hexClicked)[0];
+                            //player.y = calculateCoordinates(hexClicked)[1] - 15;
 
-                            console.log("got here");
+                            tileIsSelected = false;
 
-                            player.setVelocityY(-200);
-                            movingUp = true;
+                            //star.getChildren().map(child => child.destroy());
 
-                        } else if (heroStartCoor[1] < hexClickedCoor[1]) {
+                            //console.log("Blah", star);
+                            //star.visible = false;
+                            //star.destroy();
 
-                            console.log("ABSD");
+                            console.log(starGroup);
 
-                            player.setVelocityY(200);
-                            movingDown = true;
+                            //starGroup.clear(true, true);
+
+                            starGroup.getChildren().forEach(function(elm) {
+                                if (elm.active) {
+                                    elm.destroy();
+                                }
+                               //elm.clear(false, true);
+                            });
+
+                            starGroup.clear();
+
+                            playerMoving = true;
+
+                            let heroStartCoor = calculateCoordinates(heroStart);
+                            let hexClickedCoor = calculateCoordinates(hexClicked);
+
+
+                            if (heroStartCoor[0] < hexClickedCoor[0]) {
+
+                                player.setVelocityX(160)
+                                player.anims.play('right', true);
+                                movingRight = true;
+
+                            } else {
+
+                                player.setVelocityX(-160);
+                                player.anims.play('left', true);
+                                movingLeft = true;
+
+                            }
+
+                            console.log("!!!!!", heroStartCoor[1], hexClickedCoor[1]);
+
+                            if (heroStartCoor[1] > hexClickedCoor[1]) {
+
+                                console.log("got here");
+
+                                player.setVelocityY(-200);
+                                movingUp = true;
+
+                            } else if (heroStartCoor[1] < hexClickedCoor[1]) {
+
+                                console.log("ABSD");
+
+                                player.setVelocityY(200);
+                                movingDown = true;
+                            }
+
+                            grid[heroStart[1]][heroStart[0]] = 0;
+                            heroStart = hexClicked;
+                            destination = hexClicked;
+                            grid[hexClicked[1]][hexClicked[0]] = 1;
                         }
 
-                        grid[heroStart[1]][heroStart[0]] = 0;
-                        heroStart = hexClicked;
-                        destination = hexClicked;
-                        grid[hexClicked[1]][hexClicked[0]] = 1;
                     }
 
                 }
 
             }
+
             // console.log("AAA", playerSelected[0]);
             // if (playerSelected[0] && objectIsSelected)
             // {
@@ -417,12 +423,22 @@
                // player.y = coordinates[1] - 15;
                 playerMoving = false;
 
+             //   playersTurn = false;
+
                 //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
 
                 testCoor = coordinates;
 
 
                 timedEvent = this.time.delayedCall(20, adjustUnitPos, [], this);
+
+               // let heroesInRange = [];
+
+               // heroesInRange =
+
+               determineHeroesInRange(enemyStart, 3);
+
+               // console.log("heroes in Range array: ", heroesInRange);
 
                 //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
 
@@ -734,84 +750,57 @@
 
     function generateAvailableMoves(position, movePoints) {
         let output = [];
-
         getMoves(position, movePoints);
-
         function getMoves(position, movePoints) {
-
             //console.log("getMoves called");
-
             if (movePoints === 0) return;
-
             //if (position[1] > grid[0].length) return;
             //if (position[0] > grid.length) return;
-
               // We must check wether it is an odd or even row before we calculate moving in
               // various directions because of the way hex grid numbering lines up with
               // an array of arrays.  (IE moving up and to the left is a different calculation
               // if you start in an odd or even row.  )
-
             if (position[1] === 0 || position[1] % 2 === 0) {
-
             //Up and to the left... even rows  (odd-r horizontal lay-out)
-
                 if (position[0] - 1 >= 0 && position[1] - 1 >= 0) {
-
                     if (grid[position[1] - 1][position[0] - 1] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1] - 1])) {
                             output.push([position[0] - 1, position[1] - 1]);
                         }
                         getMoves([position[0] - 1, position[1] - 1], movePoints - 1);
-
                     }
-
                     else if (grid[position[1] - 1][position[0] - 1] === 1) {
                         getMoves([position[0] - 1, position[1] - 1], movePoints - 1);
                     }
-
                 }
-
-
                 //Up and to the right, even row
-
                 if (position[1] - 1 >= 0) {
-
                     if (grid[position[1] - 1][position[0]] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0], position[1] - 1])) {
                             output.push([position[0], position[1] - 1]);
                         }
                         getMoves([position[0], position[1] - 1], movePoints - 1);
                     }
-
                     else if (grid[position[1] - 1][position[0]] === 1) {
                         getMoves([position[0], position[1] - 1], movePoints - 1);
                     }
                 }
-
                   //Left, even row
-
-
                 if (position[0] - 1 >= 0) {
-
                     if (grid[position[1]][position[0] - 1] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1]])) {
                             output.push([position[0] - 1, position[1]]);
                         }
                         getMoves([position[0] - 1, position[1]], movePoints - 1);
                     }
-
                     else if (grid[position[1]][position[0] - 1] === 1) {
                         getMoves([position[0] - 1, position[1]], movePoints - 1);
                     }
-
                 }
-
                   //Down and to the left, even row
-
                 // console.log("movepoints = ", movePoints, "position=", position[0] - 1, position[1] + 1);
                 // console.log("grid shit = ", grid[position[0] - 1][position[1] + 1]);
                 // console.log("blah", grid[27][0]);
-
                 if (position[0] - 1 >= 0 && position[1] + 1 <= grid.length - 1) {
                     if (grid[position[1] + 1][position[0] - 1] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1] + 1])) {
@@ -819,29 +808,22 @@
                         }
                         getMoves([position[0] - 1, position[1] + 1], movePoints - 1);
                     }
-
                     else if (grid[position[0] - 1][position[1] + 1] === 1) {
                         getMoves([position[0] - 1, position[1] + 1], movePoints - 1);
                     }
                 }
-
                   //Down and to the right, even row
                 if (position[1] + 1 <= grid.length - 1) {
                     if (grid[position[1] + 1][position[0]] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0], position[1] + 1])) {
                             output.push([position[0], position[1] + 1]);
                         }
-
                         getMoves([position[0], position[1] + 1], movePoints - 1);
                     }
-
-
                     else if (grid[position[1] + 1][position[0]] === 0) {
                         getMoves([position[0], position[1] + 1], movePoints - 1);
                     }
-
                 }
-
                   //Right, even row
                 if (position[0] + 1 <= grid[0].length - 1) {
                     if (grid[position[1]][position[0] + 1] === 0) {
@@ -850,20 +832,14 @@
                         }
                         getMoves([position[0] + 1, position[1]], movePoints - 1);
                     }
-
                     else if (grid[position[1]][position[0] + 1] === 1) {
                         getMoves([position[0] + 1, position[1]], movePoints - 1);
                     }
-
                 }
-
             }
-
               // even rows logic starts here
             else {
-
                   //Up and to the Left, odd row
-
                 if (position[1] - 1 >= 0) {
                     if (grid[position[1] - 1][position[0]] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0], position[1] - 1])) {
@@ -875,11 +851,8 @@
                         getMoves([position[0], position[1] - 1], movePoints - 1);
                     }
                 }
-
                 //Up and to the right, odd row
-
                 if (position[1] - 1 >= 0) {
-
                     if (grid[position[1] - 1][position[0] + 1] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1] - 1])) {
                             output.push([position[0] + 1, position[1] - 1]);
@@ -890,9 +863,7 @@
                         getMoves([position[0] + 1, position[1] - 1], movePoints - 1);
                     }
                 }
-
                    //Left, odd row
-
                 if (position[0] - 1 >= 0) {
                     if (grid[position[1]][position[0] - 1] === 0) {
                         if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1]])) {
@@ -904,23 +875,18 @@
                         getMoves([position[0] - 1, position[1]], movePoints - 1);
                     }
                 }
-
                 //console.log("movepoints = ", movePoints, "position =", position[0], position[1] + 1);
                 //console.log("grid shit = ", grid[position[0]][position[1] + 1]);
-
                   //Down and to the left, odd row
                 if (grid[position[1] + 1][position[0]] === 0) {
                     if (!arrayIncludesCoordinates(output, [position[0], position[1] + 1])) {
                         output.push([position[0], position[1] + 1]);
                     }
-
                     getMoves([position[0], position[1] + 1], movePoints - 1);
                 }
-
                 else if (grid[position[1] + 1][position[0]] === 1) {
                     getMoves([position[0], position[1] + 1], movePoints - 1);
                 }
-
                   //Down and to the right, odd row
                 if (grid[position[1] + 1][position[0] + 1] === 0) {
                     if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1] + 1])) {
@@ -928,11 +894,9 @@
                     }
                     getMoves([position[0] + 1, position[1] + 1], movePoints - 1);
                 }
-
                 else if (grid[position[1] + 1][position[0] + 1] === 1) {
                     getMoves([position[0] + 1, position[1] + 1], movePoints - 1);
                 }
-
                   //Right, odd row
                 if (grid[position[1]][position[0] + 1] === 0) {
                     if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1]])) {
@@ -940,7 +904,6 @@
                     }
                     getMoves([position[0] + 1, position[1]], movePoints - 1);
                 }
-
                 else if (grid[position[1]][position[0] + 1] === 0) {
                     getMoves([position[0] + 1, position[1]], movePoints - 1);
                 }
@@ -962,6 +925,195 @@
         }
 
         return output;
+    }
+
+    function generateHeroesInRange(enemyPos, range) {
+
+        //breadth first search
+
+        let output = [];
+
+        let posUpLeft = enemyPos;
+        let posLeft = enemyPos;
+        let posDownLeft = enemyPos;
+        let posDownRight = enemyPos;
+        let posRight = enemyPos;
+        let posUpRight = enemyPos;
+
+        for (let i = 0; i < range; i++) {
+
+            //if (enemyPos[0] % 2 === 0) {
+
+                // if (grid[enemyPos[1] - i][enemyPos[0] - i] === 1) {
+
+                //     output.push([enemyPos[0] - i, enemyPos[1] - i]);
+
+                // }
+
+                if (posUpLeft[0] % 2 === 0) {
+                    posUpLeft = [posUpLeft[0] - 1, posUpLeft[1] - 1];
+                } else {
+                    posUpLeft = [posUpLeft[0], posUpLeft[1] - 1];
+                }
+
+                if (posLeft[0] % 2 === 0) {
+                    posLeft = [posLeft[0] - 1, posLeft[1]];
+                } else {
+                    posLeft = [posLeft[0] - 1, posLeft[1]];
+                }
+
+                if (posDownLeft[0] % 2 === 0) {
+                    posDownLeft = [posDownLeft[0] - 1, posDownLeft[1] + 1];
+                } else {
+                    posDownLeft = [posDownLeft[0], posDownLeft[1] + 1];
+                }
+
+                if (posDownRight[0] % 2 === 0) {
+                    posDownRight = [posDownRight[0], posDownRight[1] + 1];
+                } else {
+                    posDownRight = [posDownRight[0] + 1, posDownRight[1] + 1];
+                }
+
+                if (posRight[0] % 2 === 0) {
+                    posRight = [posRight[0] + 1, posRight[1]];
+                } else {
+                    posRight = [posRight[0] + 1, posRight[1]];
+                }
+
+                if (posUpRight[0] % 2 === 0) {
+                    posUpRight = [posUpRight[0], posUpRight[1] - 1];
+                } else {
+                    posUpRight = [posUpRight[0] + 1, posUpRight[1] - 1];
+                }
+
+                if (grid[posUpLeft[1]][posUpLeft[0]] === 1) {
+                    if (!arrayIncludesCoordinates(output, [posUpLeft[0], posUpLeft[1]])) {
+                        output.push([posUpLeft[0], posUpLeft[1]]);
+                    }
+                }
+
+                if (grid[posLeft[1]][posLeft[0]] === 1) {
+                    if (!arrayIncludesCoordinates(output, [posLeft[0], posLeft[1]])) {
+                        output.push([posLeft[0], posLeft[1]]);
+                    }
+                }
+
+                if (grid[posDownLeft[1]][posDownLeft[0]] === 1) {
+                    if (!arrayIncludesCoordinates(output, [posDownLeft[0], posDownLeft[1]])) {
+                        output.push([posDownLeft[0], posDownLeft[1]]);
+                    }
+                }
+
+                if (grid[posDownRight[1]][posDownRight[0]] === 1) {
+                    if (!arrayIncludesCoordinates(output, [posDownRight[0], posDownRight[1]])) {
+                        output.push([posDownRight[0], posDownRight[1]]);
+                    }
+                }
+
+                if (grid[posRight[1]][posRight[0]] === 1) {
+                    if (!arrayIncludesCoordinates(output, [posRight[0], posRight[1]])) {
+                        output.push([posRight[0], posRight[1]]);
+                    }
+                }
+
+                if (grid[posUpRight[1]][posUpRight[0]] === 1) {
+                    if (!arrayIncludesCoordinates(output, [posUpRight[0], posUpRight[1]])) {
+                        output.push([posUpRight[0], posUpRight[1]]);
+                    }
+                }
+
+
+        }
+
+        return output;
+
+    }
+
+    function determineHeroesInRange(pos, range) {
+
+        let output = [];
+        let frontier = [];
+        let visited = [pos];
+        let coor;
+
+
+        //console.log("POS = ", pos);
+        //console.log(pos[0] % 2);
+
+        //check if we're starting on an even row
+        if (pos[1] % 2 === 0) {
+
+          //  console.log("GOT OVER HERE");
+
+            // up left
+            frontier.push([pos[0] - 1, pos[1] - 1]);
+            visited.push([pos[0] - 1, pos[1] - 1]);
+
+            // left
+            frontier.push([pos[0] - 1, pos[1]]);
+            visited.push([pos[0] - 1, pos[1]]);
+
+            // down left
+            frontier.push([pos[0] - 1, pos[1] + 1]);
+            visited.push([pos[0] - 1, pos[1] + 1]);
+
+            // down right
+            frontier.push([pos[0], pos[1] + 1]);
+            visited.push([pos[0], pos[1] + 1]);
+
+            // right
+            frontier.push([pos[0] + 1, pos[1]]);
+            visited.push([pos[0] + 1, pos[1]]);
+
+            // up right
+            frontier.push([pos[0], pos[1] + 1]);
+            visited.push([pos[0], pos[1] + 1]);
+
+        // odd rows
+        } else {
+
+           // console.log("BOOOOOOOOM");
+
+            //up left
+            frontier.push([pos[0], pos[1] - 1]);
+            visited.push([pos[0], pos[1] - 1]);
+
+            // left
+            frontier.push([pos[0] - 1, pos[1]]);
+            visited.push([pos[0] - 1, pos[1]]);
+
+            // down left
+            frontier.push([pos[0], pos[1] + 1]);
+            visited.push([pos[0], pos[1] + 1]);
+
+            // down right
+            frontier.push([pos[0] + 1, pos[1] + 1]);
+            visited.push([pos[0] + 1, pos[1] + 1]);
+
+            // right
+            frontier.push([pos[0] + 1, pos[1]]);
+            visited.push([pos[0] + 1, pos[1]]);
+
+            // up right
+            frontier.push([pos[0] + 1, pos[1] - 1]);
+            visited.push([pos[0] + 1, pos[1] - 1]);
+        }
+
+        while (frontier.length !== 0){
+
+            coor = frontier.pop();
+
+            console.log("coor = ", coor);
+
+        }
+
+
+
+
+
+        console.log(frontier, visited);
+
+
     }
 
     function adjustUnitPos () {
