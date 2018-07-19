@@ -50,6 +50,8 @@
     let destination;
     let testCoor;
     let playersTurn = true;
+    let MAXHEIGHT = 28;
+    let MAXWIDTH = 26;
 
 
     var grid =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -432,11 +434,13 @@
 
                 timedEvent = this.time.delayedCall(20, adjustUnitPos, [], this);
 
-               // let heroesInRange = [];
+                //let heroesInRange = [];
 
                // heroesInRange =
 
-               determineHeroesInRange(enemyStart, 3);
+               let heroesInRange = determineHeroesInRange(enemyStart, 4);
+
+               console.log("heroes in range = ", heroesInRange);
 
                // console.log("heroes in Range array: ", heroesInRange);
 
@@ -1035,6 +1039,11 @@
         let frontier = [];
         let visited = [pos];
         let coor;
+        let depth = 0;
+        let keepPushing = true;
+        //let subRange = range;
+        let elementsUntilDepthIncrease = 0;
+       // let temp;
 
 
         //console.log("POS = ", pos);
@@ -1066,8 +1075,8 @@
             visited.push([pos[0] + 1, pos[1]]);
 
             // up right
-            frontier.push([pos[0], pos[1] + 1]);
-            visited.push([pos[0], pos[1] + 1]);
+            frontier.push([pos[0], pos[1] - 1]);
+            visited.push([pos[0], pos[1] - 1]);
 
         // odd rows
         } else {
@@ -1099,20 +1108,219 @@
             visited.push([pos[0] + 1, pos[1] - 1]);
         }
 
-        while (frontier.length !== 0){
+        while (frontier.length !== 0) {
+
+            //21, 4      21,3      22,2    22, 1     23,0
+
+            //  for (let i = 0; i < 1000; i++) {
 
             coor = frontier.pop();
+           // depth--;
 
-            console.log("coor = ", coor);
+            keepPushing = true;
+
+            if (determineDepth(coor, pos) >= range) {
+                keepPushing = false;
+            }
+
+           // console.log("coor = ", coor);
+           // console.log("depth of coor", determineDepth(coor, pos));
+
+            if (grid[coor[1]][coor[0]] === 1) {
+                output.push(coor);
+           //     console.log("!!!! temp = ", temp);
+            }
+
+            if (coor[1] % 2 === 0) {
+
+                //console.log("coor = ", coor);
+
+
+                // up left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] - 1]) && coor[0] - 1 >= 0 && coor[1] - 1 >= 0 && keepPushing ) {
+
+                    frontier.push([coor[0] - 1, coor[1] - 1]);
+                    visited.push([coor[0] - 1, coor[1] - 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+                }
+
+                // left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && keepPushing) {
+
+                    frontier.push([coor[0] - 1, coor[1]]);
+                    visited.push([coor[0] - 1, coor[1]]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+                }
+
+
+                // down left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] + 1]) && coor[0] - 1 >= 0 && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+
+                    frontier.push([coor[0] - 1, coor[1] + 1]);
+                    visited.push([coor[0] - 1, coor[1] + 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+                }
+
+                // down right
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+
+                    frontier.push([coor[0], coor[1] + 1]);
+                    visited.push([coor[0], coor[1] + 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+                // right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1]]);
+                    visited.push([coor[0] + 1, coor[1]]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+                // up right
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && keepPushing) {
+
+                    frontier.push([coor[0], coor[1] - 1]);
+                    visited.push([coor[0], coor[1] - 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+            } else {  //odd rows
+
+                //up left
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && keepPushing) {
+
+                    frontier.push([coor[0], coor[1] - 1]);
+                    visited.push([coor[0], coor[1] - 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+                // left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && keepPushing) {
+
+                    frontier.push([coor[0] - 1, coor[1]]);
+                    visited.push([coor[0] - 1, coor[1]]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+                //down left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] + 1]) && coor[0] - 1 >= 0 && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+
+                    frontier.push([coor[0] - 1, coor[1] + 1]);
+                    visited.push([coor[0] - 1, coor[1] + 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+                //down right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] + 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1] + 1]);
+                    visited.push([coor[0] + 1, coor[1] + 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+                //right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1]]);
+                    visited.push([coor[0] + 1, coor[1]]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+                }
+
+                //up right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] - 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] - 1 >= 0 && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1] - 1]);
+                    visited.push([coor[0] + 1, coor[1] - 1]);
+
+                    if (depth < range) {
+                        elementsUntilDepthIncrease++;
+                    }
+
+
+                }
+            }
+
+           // if (grid[coor[1]][coor[0]] === 1) {
+             //   output.push(coor);
+           // }
+
+
+
 
         }
 
 
 
 
+        //temp = coor;
+       //console.log("Frontier = ",frontier, "visited = ", visited, "output = ", output);
+       return output;
 
-        console.log(frontier, visited);
+        function determineDepth(coord, enemyPos) {
 
+            let coordInCube = oddr_to_cube(coord);
+            let posInCube = oddr_to_cube(enemyPos);
+
+            let output = cube_distance(coordInCube, posInCube);
+
+//            console.log("coordInCube = ", coordInCube, "Pos in cube = ", posInCube);
+
+            function cube_distance(a, b) {
+                return (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2])) / 2
+            }
+
+            function oddr_to_cube(hex) {
+                var x = hex[0] - (hex[1] - (hex[1]&1)) / 2;
+                var z = hex[1];
+                var y = -x-z;
+                return [x, y, z];
+            }
+
+            return output;
+
+        }
 
     }
 
