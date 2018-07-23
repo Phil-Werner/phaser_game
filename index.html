@@ -87,13 +87,13 @@
     //grid[22][3] = 1;
     //grid[21][12] = 2;
 
-    var heroStart = [19, 2];
-    var enemyStart = [20, 5];
+    var heroCoor = [19, 2];
+    var enemyCoor = [20, 5];
 
-    //console.log(heroStart[0]);
+    //console.log(heroCoor[0]);
 
-    grid[heroStart[1]][heroStart[0]] = 1;
-    grid[enemyStart[1]][enemyStart[0]] = 2;
+    grid[heroCoor[1]][heroCoor[0]] = 1;
+    grid[enemyCoor[1]][enemyCoor[0]] = 2;
 
 
     var game = new Phaser.Game(config);
@@ -142,8 +142,8 @@
         // platforms.create(50, 250, 'ground');
         // platforms.create(750, 220, 'ground');
 
-        let startingCoordinates = calculateCoordinates([heroStart[0], heroStart[1]]);
-        let enemyStarCoor = calculateCoordinates([enemyStart[0], enemyStart[1]]);
+        let startingCoordinates = calculateCoordinates([heroCoor[0], heroCoor[1]]);
+        let enemyStarCoor = calculateCoordinates([enemyCoor[0], enemyCoor[1]]);
 
         player = this.physics.add.sprite(startingCoordinates[0], startingCoordinates[1] - 15, 'dude');
 
@@ -167,6 +167,14 @@
         player.depth = 2;
 
  //       star.on('clicked', clickFunc, this);
+
+        // bullet = this.physics.add.sprite(0, 0, 'bomb');
+
+        // bullet.setActive(false);
+        // bullet.setVisible(false);
+
+        bomb = new Bullet(0, 0, 'bomb');
+        bomb.alive = false;
 
         this.input.on('gameobjectup', function (pointer, gameObject)
         {
@@ -218,7 +226,7 @@
                             //let coordinates = calculateCoordinates([2, 24]);
                             let coordinates;
 
-                            availableMoves = generateAvailableMoves(heroStart, 5);
+                            availableMoves = generateAvailableMoves(heroCoor, 5);
 
                            // console.log(availableMoves);
 
@@ -279,11 +287,11 @@
 
                             playerMoving = true;
 
-                            let heroStartCoor = calculateCoordinates(heroStart);
+                            let heroCoorCoor = calculateCoordinates(heroCoor);
                             let hexClickedCoor = calculateCoordinates(hexClicked);
 
 
-                            if (heroStartCoor[0] < hexClickedCoor[0]) {
+                            if (heroCoorCoor[0] < hexClickedCoor[0]) {
 
                                 player.setVelocityX(160)
                                 player.anims.play('right', true);
@@ -297,16 +305,16 @@
 
                             }
 
-                            console.log("!!!!!", heroStartCoor[1], hexClickedCoor[1]);
+                            console.log("!!!!!", heroCoorCoor[1], hexClickedCoor[1]);
 
-                            if (heroStartCoor[1] > hexClickedCoor[1]) {
+                            if (heroCoorCoor[1] > hexClickedCoor[1]) {
 
                                 console.log("got here");
 
                                 player.setVelocityY(-200);
                                 movingUp = true;
 
-                            } else if (heroStartCoor[1] < hexClickedCoor[1]) {
+                            } else if (heroCoorCoor[1] < hexClickedCoor[1]) {
 
                                 console.log("ABSD");
 
@@ -314,8 +322,8 @@
                                 movingDown = true;
                             }
 
-                            grid[heroStart[1]][heroStart[0]] = 0;
-                            heroStart = hexClicked;
+                            grid[heroCoor[1]][heroCoor[0]] = 0;
+                            heroCoor = hexClicked;
                             destination = hexClicked;
                             grid[hexClicked[1]][hexClicked[0]] = 1;
                         }
@@ -438,9 +446,25 @@
 
                // heroesInRange =
 
-               let heroesInRange = determineHeroesInRange(enemyStart, 4);
+                 let heroesInRange = determineHeroesInRange(enemyCoor, 4);
 
-               console.log("heroes in range = ", heroesInRange);
+                 console.log("heroes in range = ", heroesInRange);
+
+                if (heroesInRange.length >= 1) {
+
+                    //randomly (?) determine which hero to attack.  Now that I think about it,
+                    // maybe should attack the weakest hero in ragne or something.
+                    // for now just use [0]
+
+                    enemyRangedAttack(heroesInRange[0], enemyCoor)
+
+                        // bullet.setActive(true);
+                        // bullet.setVisible(true);
+                        // bullet.x = enemyPos[0] - 5;
+                        // bullet.y = enemyPos[1] - 5;
+
+                        // bullet.setVelocityX(-200);
+                }
 
                // console.log("heroes in Range array: ", heroesInRange);
 
@@ -1042,7 +1066,7 @@
         let depth = 0;
         let keepPushing = true;
         //let subRange = range;
-        let elementsUntilDepthIncrease = 0;
+       // let elementsUntilDepthIncrease = 0;
        // let temp;
 
 
@@ -1119,14 +1143,16 @@
 
             keepPushing = true;
 
-            if (determineDepth(coor, pos) >= range) {
+            console.log("depth of coor for coor=", coor, " depth = ", determineDepth(coor, pos));
+
+            if (determineDepth(coor, pos) > range) {
                 keepPushing = false;
             }
 
            // console.log("coor = ", coor);
            // console.log("depth of coor", determineDepth(coor, pos));
 
-            if (grid[coor[1]][coor[0]] === 1) {
+            if (grid[coor[1]][coor[0]] === 1 && keepPushing) {
                 output.push(coor);
            //     console.log("!!!! temp = ", temp);
             }
@@ -1142,9 +1168,9 @@
                     frontier.push([coor[0] - 1, coor[1] - 1]);
                     visited.push([coor[0] - 1, coor[1] - 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
                 }
 
                 // left
@@ -1153,9 +1179,9 @@
                     frontier.push([coor[0] - 1, coor[1]]);
                     visited.push([coor[0] - 1, coor[1]]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
                 }
 
 
@@ -1165,9 +1191,9 @@
                     frontier.push([coor[0] - 1, coor[1] + 1]);
                     visited.push([coor[0] - 1, coor[1] + 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
                 }
 
                 // down right
@@ -1176,9 +1202,9 @@
                     frontier.push([coor[0], coor[1] + 1]);
                     visited.push([coor[0], coor[1] + 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1188,9 +1214,9 @@
                     frontier.push([coor[0] + 1, coor[1]]);
                     visited.push([coor[0] + 1, coor[1]]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1200,9 +1226,9 @@
                     frontier.push([coor[0], coor[1] - 1]);
                     visited.push([coor[0], coor[1] - 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1214,9 +1240,9 @@
                     frontier.push([coor[0], coor[1] - 1]);
                     visited.push([coor[0], coor[1] - 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1226,9 +1252,9 @@
                     frontier.push([coor[0] - 1, coor[1]]);
                     visited.push([coor[0] - 1, coor[1]]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1238,9 +1264,9 @@
                     frontier.push([coor[0] - 1, coor[1] + 1]);
                     visited.push([coor[0] - 1, coor[1] + 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1250,9 +1276,9 @@
                     frontier.push([coor[0] + 1, coor[1] + 1]);
                     visited.push([coor[0] + 1, coor[1] + 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1262,9 +1288,9 @@
                     frontier.push([coor[0] + 1, coor[1]]);
                     visited.push([coor[0] + 1, coor[1]]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
                 }
 
@@ -1274,9 +1300,9 @@
                     frontier.push([coor[0] + 1, coor[1] - 1]);
                     visited.push([coor[0] + 1, coor[1] - 1]);
 
-                    if (depth < range) {
-                        elementsUntilDepthIncrease++;
-                    }
+                    // if (depth < range) {
+                    //     elementsUntilDepthIncrease++;
+                    // }
 
 
                 }
@@ -1327,6 +1353,53 @@
     function adjustUnitPos () {
         player.x = testCoor[0];
         player.y = testCoor[1] - 15;
+    }
+
+    function enemyRangedAttack(heroPos, enemyPos) {
+
+       // this.add.image(enemyPos[0] - 5, enemyPos[1] - 5, 'spark');
+       // spark.setVelocityX(200);
+
+       //console.log("GGGGG got here");
+
+        let bulletCoor = calculateCoordinates(enemyPos);
+
+        // bullet.setActive(true);
+        // bullet.setVisible(true);
+        // bullet.x = bulletCoor[0] - 5;
+        // bullet.y = bulletCoor[1] - 5;
+
+        // //check if the hero is above or below the enemy
+
+        // let y;
+        // let x;
+
+        // if (heroPos[1] > enemyPos[1]) {
+
+        //     bullet.setVelocityY(y);
+        // } else {
+
+        //     bullet.setVelocityY(y);
+        // }
+
+        // if (heroPos[0] > enemyPos[0]) {
+
+        //     bullet.setVelocityX(x);
+        // } else {
+
+        //     bullet.setVelocityX(x);
+        // }
+
+
+
+
+        // bullet.setVelocityX(0);
+        // bullet.setVelocityY(150);
+        // bullet.setAccelerationY(100);
+
+
+        console.log("tihs occuredd");
+        bomb.alive = true;
     }
 
 </script>
