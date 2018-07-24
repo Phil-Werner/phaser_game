@@ -168,13 +168,13 @@
 
  //       star.on('clicked', clickFunc, this);
 
-        // bullet = this.physics.add.sprite(0, 0, 'bomb');
+        bullet = this.physics.add.sprite(0, 0, 'bomb');
 
-        // bullet.setActive(false);
-        // bullet.setVisible(false);
+        bullet.setActive(false);
+        bullet.setVisible(false);
 
-        bomb = new Bullet(0, 0, 'bomb');
-        bomb.alive = false;
+        // bomb = new Bullet(0, 0, 'bomb');
+        // bomb.alive = false;
 
         this.input.on('gameobjectup', function (pointer, gameObject)
         {
@@ -955,107 +955,107 @@
         return output;
     }
 
-    function generateHeroesInRange(enemyPos, range) {
+    // function generateHeroesInRange(enemyPos, range) {
 
-        //breadth first search
+    //     //breadth first search
 
-        let output = [];
+    //     let output = [];
 
-        let posUpLeft = enemyPos;
-        let posLeft = enemyPos;
-        let posDownLeft = enemyPos;
-        let posDownRight = enemyPos;
-        let posRight = enemyPos;
-        let posUpRight = enemyPos;
+    //     let posUpLeft = enemyPos;
+    //     let posLeft = enemyPos;
+    //     let posDownLeft = enemyPos;
+    //     let posDownRight = enemyPos;
+    //     let posRight = enemyPos;
+    //     let posUpRight = enemyPos;
 
-        for (let i = 0; i < range; i++) {
+    //     for (let i = 0; i < range; i++) {
 
-            //if (enemyPos[0] % 2 === 0) {
+    //         //if (enemyPos[0] % 2 === 0) {
 
-                // if (grid[enemyPos[1] - i][enemyPos[0] - i] === 1) {
+    //             // if (grid[enemyPos[1] - i][enemyPos[0] - i] === 1) {
 
-                //     output.push([enemyPos[0] - i, enemyPos[1] - i]);
+    //             //     output.push([enemyPos[0] - i, enemyPos[1] - i]);
 
-                // }
+    //             // }
 
-                if (posUpLeft[0] % 2 === 0) {
-                    posUpLeft = [posUpLeft[0] - 1, posUpLeft[1] - 1];
-                } else {
-                    posUpLeft = [posUpLeft[0], posUpLeft[1] - 1];
-                }
+    //             if (posUpLeft[0] % 2 === 0) {
+    //                 posUpLeft = [posUpLeft[0] - 1, posUpLeft[1] - 1];
+    //             } else {
+    //                 posUpLeft = [posUpLeft[0], posUpLeft[1] - 1];
+    //             }
 
-                if (posLeft[0] % 2 === 0) {
-                    posLeft = [posLeft[0] - 1, posLeft[1]];
-                } else {
-                    posLeft = [posLeft[0] - 1, posLeft[1]];
-                }
+    //             if (posLeft[0] % 2 === 0) {
+    //                 posLeft = [posLeft[0] - 1, posLeft[1]];
+    //             } else {
+    //                 posLeft = [posLeft[0] - 1, posLeft[1]];
+    //             }
 
-                if (posDownLeft[0] % 2 === 0) {
-                    posDownLeft = [posDownLeft[0] - 1, posDownLeft[1] + 1];
-                } else {
-                    posDownLeft = [posDownLeft[0], posDownLeft[1] + 1];
-                }
+    //             if (posDownLeft[0] % 2 === 0) {
+    //                 posDownLeft = [posDownLeft[0] - 1, posDownLeft[1] + 1];
+    //             } else {
+    //                 posDownLeft = [posDownLeft[0], posDownLeft[1] + 1];
+    //             }
 
-                if (posDownRight[0] % 2 === 0) {
-                    posDownRight = [posDownRight[0], posDownRight[1] + 1];
-                } else {
-                    posDownRight = [posDownRight[0] + 1, posDownRight[1] + 1];
-                }
+    //             if (posDownRight[0] % 2 === 0) {
+    //                 posDownRight = [posDownRight[0], posDownRight[1] + 1];
+    //             } else {
+    //                 posDownRight = [posDownRight[0] + 1, posDownRight[1] + 1];
+    //             }
 
-                if (posRight[0] % 2 === 0) {
-                    posRight = [posRight[0] + 1, posRight[1]];
-                } else {
-                    posRight = [posRight[0] + 1, posRight[1]];
-                }
+    //             if (posRight[0] % 2 === 0) {
+    //                 posRight = [posRight[0] + 1, posRight[1]];
+    //             } else {
+    //                 posRight = [posRight[0] + 1, posRight[1]];
+    //             }
 
-                if (posUpRight[0] % 2 === 0) {
-                    posUpRight = [posUpRight[0], posUpRight[1] - 1];
-                } else {
-                    posUpRight = [posUpRight[0] + 1, posUpRight[1] - 1];
-                }
+    //             if (posUpRight[0] % 2 === 0) {
+    //                 posUpRight = [posUpRight[0], posUpRight[1] - 1];
+    //             } else {
+    //                 posUpRight = [posUpRight[0] + 1, posUpRight[1] - 1];
+    //             }
 
-                if (grid[posUpLeft[1]][posUpLeft[0]] === 1) {
-                    if (!arrayIncludesCoordinates(output, [posUpLeft[0], posUpLeft[1]])) {
-                        output.push([posUpLeft[0], posUpLeft[1]]);
-                    }
-                }
+    //             if (grid[posUpLeft[1]][posUpLeft[0]] === 1) {
+    //                 if (!arrayIncludesCoordinates(output, [posUpLeft[0], posUpLeft[1]])) {
+    //                     output.push([posUpLeft[0], posUpLeft[1]]);
+    //                 }
+    //             }
 
-                if (grid[posLeft[1]][posLeft[0]] === 1) {
-                    if (!arrayIncludesCoordinates(output, [posLeft[0], posLeft[1]])) {
-                        output.push([posLeft[0], posLeft[1]]);
-                    }
-                }
+    //             if (grid[posLeft[1]][posLeft[0]] === 1) {
+    //                 if (!arrayIncludesCoordinates(output, [posLeft[0], posLeft[1]])) {
+    //                     output.push([posLeft[0], posLeft[1]]);
+    //                 }
+    //             }
 
-                if (grid[posDownLeft[1]][posDownLeft[0]] === 1) {
-                    if (!arrayIncludesCoordinates(output, [posDownLeft[0], posDownLeft[1]])) {
-                        output.push([posDownLeft[0], posDownLeft[1]]);
-                    }
-                }
+    //             if (grid[posDownLeft[1]][posDownLeft[0]] === 1) {
+    //                 if (!arrayIncludesCoordinates(output, [posDownLeft[0], posDownLeft[1]])) {
+    //                     output.push([posDownLeft[0], posDownLeft[1]]);
+    //                 }
+    //             }
 
-                if (grid[posDownRight[1]][posDownRight[0]] === 1) {
-                    if (!arrayIncludesCoordinates(output, [posDownRight[0], posDownRight[1]])) {
-                        output.push([posDownRight[0], posDownRight[1]]);
-                    }
-                }
+    //             if (grid[posDownRight[1]][posDownRight[0]] === 1) {
+    //                 if (!arrayIncludesCoordinates(output, [posDownRight[0], posDownRight[1]])) {
+    //                     output.push([posDownRight[0], posDownRight[1]]);
+    //                 }
+    //             }
 
-                if (grid[posRight[1]][posRight[0]] === 1) {
-                    if (!arrayIncludesCoordinates(output, [posRight[0], posRight[1]])) {
-                        output.push([posRight[0], posRight[1]]);
-                    }
-                }
+    //             if (grid[posRight[1]][posRight[0]] === 1) {
+    //                 if (!arrayIncludesCoordinates(output, [posRight[0], posRight[1]])) {
+    //                     output.push([posRight[0], posRight[1]]);
+    //                 }
+    //             }
 
-                if (grid[posUpRight[1]][posUpRight[0]] === 1) {
-                    if (!arrayIncludesCoordinates(output, [posUpRight[0], posUpRight[1]])) {
-                        output.push([posUpRight[0], posUpRight[1]]);
-                    }
-                }
+    //             if (grid[posUpRight[1]][posUpRight[0]] === 1) {
+    //                 if (!arrayIncludesCoordinates(output, [posUpRight[0], posUpRight[1]])) {
+    //                     output.push([posUpRight[0], posUpRight[1]]);
+    //                 }
+    //             }
 
 
-        }
+    //     }
 
-        return output;
+    //     return output;
 
-    }
+    // }
 
     function determineHeroesInRange(pos, range) {
 
@@ -1143,7 +1143,7 @@
 
             keepPushing = true;
 
-            console.log("depth of coor for coor=", coor, " depth = ", determineDepth(coor, pos));
+            //console.log("depth of coor for coor=", coor, " depth = ", determineDepth(coor, pos));
 
             if (determineDepth(coor, pos) > range) {
                 keepPushing = false;
@@ -1364,21 +1364,35 @@
 
         let bulletCoor = calculateCoordinates(enemyPos);
 
-        // bullet.setActive(true);
-        // bullet.setVisible(true);
-        // bullet.x = bulletCoor[0] - 5;
-        // bullet.y = bulletCoor[1] - 5;
+        bullet.setActive(true);
+        bullet.setVisible(true);
+        bullet.x = bulletCoor[0] - 5;
+        bullet.y = bulletCoor[1] - 5;
 
-        // //check if the hero is above or below the enemy
+        //check if the hero is above or below the enemy
 
-        // let y;
-        // let x;
+        let x;
+        let y;
+
+        let heroCoor = calculateCoordinates(heroPos);
+        let enemyCoor = calculateCoordinates(enemyPos);
+
+        let angle = Phaser.Math.Angle.Between(heroCoor[0], heroCoor[1], enemyCoor[0], enemyCoor[1]);
+
+       // timedEvent = .time.delayedCall(100, {}, [], this);
+
+        //angle = angle / 0.01745329252;
+
+        console.log("angle = ", angle);
+
+        x = Math.cos(angle) * 200;
+
+        y = Math.sin(angle) * 200;
 
         // if (heroPos[1] > enemyPos[1]) {
 
         //     bullet.setVelocityY(y);
         // } else {
-
         //     bullet.setVelocityY(y);
         // }
 
@@ -1393,13 +1407,13 @@
 
 
 
-        // bullet.setVelocityX(0);
-        // bullet.setVelocityY(150);
+        bullet.setVelocityX(-x);
+        bullet.setVelocityY(-y);
         // bullet.setAccelerationY(100);
 
 
-        console.log("tihs occuredd");
-        bomb.alive = true;
+        // console.log("tihs occuredd");
+        // bomb.alive = true;
     }
 
 </script>
