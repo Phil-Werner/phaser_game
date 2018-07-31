@@ -52,6 +52,12 @@
     let playersTurn = true;
     let MAXHEIGHT = 28;
     let MAXWIDTH = 26;
+    let enemyBulletMoving = false;
+    let enemyBulletMovingTo;
+    let enemyBulletMovingLeft = false;
+    let enemyBulletMovingRight = false;
+    let enemyBulletMovingUp = false;
+    let enemyBulletMovingDown = false;
 
 
     var grid =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -87,7 +93,7 @@
     //grid[22][3] = 1;
     //grid[21][12] = 2;
 
-    var heroCoor = [19, 2];
+    var heroCoor = [2, 2];
     var enemyCoor = [20, 5];
 
     //console.log(heroCoor[0]);
@@ -151,6 +157,7 @@
         enemy.setTint(0xff0000);
         enemy.depth = 2;
 
+
 //        star = this.physics.add.sprite(400, 450, 'star');
 
 
@@ -205,6 +212,8 @@
 
         this.physics.add.collider(player, platforms);
 
+
+
         this.input.on('pointerdown', function (pointer)
         {
 
@@ -213,7 +222,7 @@
 
             if (playersTurn) {
 
-                if (!playerMoving) {
+               // if (!playerMoving) {
 
                     if (tileIsSelected === false) {
 
@@ -291,46 +300,97 @@
                             let hexClickedCoor = calculateCoordinates(hexClicked);
 
 
-                            if (heroCoorCoor[0] < hexClickedCoor[0]) {
+                           //  if (heroCoorCoor[0] < hexClickedCoor[0]) {
 
-                                player.setVelocityX(160)
-                                player.anims.play('right', true);
-                                movingRight = true;
+                           //      player.setVelocityX(160)
+                           //      player.anims.play('right', true);
+                           //      movingRight = true;
 
-                            } else {
+                           //  } else {
 
-                                player.setVelocityX(-160);
-                                player.anims.play('left', true);
-                                movingLeft = true;
+                           //      player.setVelocityX(-160);
+                           //      player.anims.play('left', true);
+                           //      movingLeft = true;
 
-                            }
+                           //  }
 
-                            console.log("!!!!!", heroCoorCoor[1], hexClickedCoor[1]);
+                           // // this.physics.moveTo(player, hexClickedCoor[0], hexClickedCoor[1] - 15);
 
-                            if (heroCoorCoor[1] > hexClickedCoor[1]) {
 
-                                console.log("got here");
 
-                                player.setVelocityY(-200);
-                                movingUp = true;
+                           //  console.log("Something amazing has happened");
 
-                            } else if (heroCoorCoor[1] < hexClickedCoor[1]) {
+                           //  //moveToXY(player, heroCoorCoor[0], heroCoorCoor[1], 0, 3000);
 
-                                console.log("ABSD");
 
-                                player.setVelocityY(200);
-                                movingDown = true;
-                            }
+                           //  console.log("!!!!!", heroCoorCoor[1], hexClickedCoor[1]);
 
-                            grid[heroCoor[1]][heroCoor[0]] = 0;
-                            heroCoor = hexClicked;
-                            destination = hexClicked;
-                            grid[hexClicked[1]][hexClicked[0]] = 1;
+                           //  if (heroCoorCoor[1] > hexClickedCoor[1]) {
+
+                           //      console.log("got here");
+
+                           //      player.setVelocityY(-200);
+                           //      movingUp = true;
+
+                           //  } else if (heroCoorCoor[1] < hexClickedCoor[1]) {
+
+                           //      console.log("ABSD");
+
+                           //      player.setVelocityY(200);
+                           //      movingDown = true;
+                           //  }
+
+                        var playerTween = this.tweens.add({
+                            targets: player,
+                            x: hexClickedCoor[0],
+                            y: hexClickedCoor[1] - 15,
+                            duration: 500,
+                        });
+
+                       // heroCoor = hexClicked;
+                       // heroCoorCoor = calculateCoordinates(heroCoor);
+
+                        grid[heroCoor[1]][heroCoor[0]] = 0;
+                        heroCoor = hexClicked;
+                        destination = hexClicked;
+                        grid[hexClicked[1]][hexClicked[0]] = 1;
+
+                        heroCoorCoor = calculateCoordinates(heroCoor);
+
+                        let heroesInRange = determineHeroesInRange(enemyCoor, 10);
+
+                        if (heroesInRange.length >= 1) {
+
+                            console.log("got here purple");
+                          //  enemyRangedAttack();
+
+                            let bulletCoor = calculateCoordinates(enemyCoor);
+                            bullet.setActive(true);
+                            bullet.setVisible(true);
+                            bullet.x = bulletCoor[0] - 5;
+                            bullet.y = bulletCoor[1] - 5;
+
+                            var bulletTween = this.tweens.add({
+                                targets: bullet,
+                                x: heroCoorCoor[0] - 5,
+                                y: heroCoorCoor[1] - 10,
+                                duration: 600,
+                                onComplete: function () {
+                                    bullet.setActive(false);
+                                    bullet.setVisible(false);
+                                },
+                            });
+
+                        }
+
+
+
+
                         }
 
                     }
 
-                }
+               // }
 
             }
 
@@ -381,82 +441,84 @@
     function update ()
     {
 
-        if (playerMoving) {
+        //this.cameras.main.scrollX = 50;
 
-            let coordinates = calculateCoordinates(destination);
+        // if (playerMoving) {
 
-            if (movingRight) {
+        //     let coordinates = calculateCoordinates(destination);
 
-
-
-                if (player.x > coordinates[0] - 4) {
-                    player.setVelocityX(0);
-                    movingRight = false;
-                   // player.anims.play('turn')
-                }
-
-            }
-
-            if (movingUp) {
-
-                if (player.y < coordinates[1] - 10) {
-                    player.setVelocityY(0);
-                    movingUp = false;
-                }
-            }
-
-            if (movingLeft) {
-
-                if (player.x < coordinates[0] + 4) {
-
-                    player.setVelocityX(0);
-                    movingLeft = false;
-                }
-            }
-
-            if (movingDown) {
-
-                if (player.y > coordinates[1] - 20) {
-
-                    player.setVelocityY(0);
-                    movingDown = false;
-                }
-            }
-
-            if (!movingUp && !movingRight && !movingLeft && !movingDown) {
-
-                //timedEvent = this.time.delayedCall(1000);
-
-                player.anims.stop();
-
-               // player.x = coordinates[0];
-               // player.y = coordinates[1] - 15;
-                playerMoving = false;
-
-             //   playersTurn = false;
-
-                //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
-
-                testCoor = coordinates;
+        //     if (movingRight) {
 
 
-                timedEvent = this.time.delayedCall(20, adjustUnitPos, [], this);
+
+        //         if (player.x >= coordinates[0] - 4) {
+        //             player.setVelocityX(0);
+        //             movingRight = false;
+        //            // player.anims.play('turn')
+        //         }
+
+        //     }
+
+        //     if (movingUp) {
+
+        //         if (player.y <= coordinates[1] - 10) {
+        //             player.setVelocityY(0);
+        //             movingUp = false;
+        //         }
+        //     }
+
+        //     if (movingLeft) {
+
+        //         if (player.x <= coordinates[0] + 4) {
+
+        //             player.setVelocityX(0);
+        //             movingLeft = false;
+        //         }
+        //     }
+
+        //     if (movingDown) {
+
+        //         if (player.y >= coordinates[1] - 20) {
+
+        //             player.setVelocityY(0);
+        //             movingDown = false;
+        //         }
+        //     }
+
+        //     if (!movingUp && !movingRight && !movingLeft && !movingDown) {
+
+        //         //timedEvent = this.time.delayedCall(1000);
+
+        //         player.anims.stop();
+
+        //        // player.x = coordinates[0];
+        //        // player.y = coordinates[1] - 15;
+        //         playerMoving = false;
+
+        //      //   playersTurn = false;
+
+        //         //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
+
+        //         testCoor = coordinates;
+
+
+        //         timedEvent = this.time.delayedCall(20, adjustUnitPos, [], this);
 
                 //let heroesInRange = [];
 
                // heroesInRange =
 
-                 let heroesInRange = determineHeroesInRange(enemyCoor, 4);
+            //     let heroesInRange = determineHeroesInRange(enemyCoor, 10);
 
-                 console.log("heroes in range = ", heroesInRange);
+             //    console.log("heroes in range = ", heroesInRange);
 
-                if (heroesInRange.length >= 1) {
+               // if (heroesInRange.length >= 1) {
 
                     //randomly (?) determine which hero to attack.  Now that I think about it,
                     // maybe should attack the weakest hero in ragne or something.
                     // for now just use [0]
 
-                    enemyRangedAttack(heroesInRange[0], enemyCoor)
+                 //   enemyRangedAttack(heroesInRange[0], enemyCoor)
 
                         // bullet.setActive(true);
                         // bullet.setVisible(true);
@@ -464,14 +526,65 @@
                         // bullet.y = enemyPos[1] - 5;
 
                         // bullet.setVelocityX(-200);
-                }
+               // }
 
                // console.log("heroes in Range array: ", heroesInRange);
 
                 //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
 
-                console.log("Player.x = ", player.x, "Player.y = ", player.y);
+             //   console.log("Player.x = ", player.x, "Player.y = ", player.y);
+       //     }
+
+    //    }
+
+        if (enemyBulletMoving) {
+
+            let movingToCoor = calculateCoordinates(enemyBulletMovingTo);
+
+            if (enemyBulletMovingUp) {
+
+                if (bullet.y <= movingToCoor[1]) {
+                    enemyBulletMovingUp = false;
+                    bullet.setVelocityY(0);
+                }
             }
+
+            if (enemyBulletMovingDown) {
+                if (bullet.y >= movingToCoor[1] - 10) {
+                    enemyBulletMovingDown = false;
+                    bullet.setVelocityY(0);
+                }
+            }
+
+            if (enemyBulletMovingRight) {
+
+                if (bullet.x >= movingToCoor[0] - 5) {
+                    enemyBulletMovingRight = false;
+                    bullet.setVelocityX(0);
+
+                }
+            }
+
+            if (enemyBulletMovingLeft) {
+                if (bullet.x <= movingToCoor[0]) {
+                    enemyBulletMovingLeft = false;
+                    bullet.setVelocityX(0);
+                }
+            }
+
+            if (!enemyBulletMovingUp && !enemyBulletMovingDown && !enemyBulletMovingRight && !enemyBulletMovingLeft) {
+                enemyBulletMoving = false;
+                bullet.setActive(false);
+                bullet.setVisible(false);
+            }
+
+            // console.log("up = ", enemyBulletMovingUp);
+            //     console.log("down = ", enemyBulletMovingDown);
+            //     console.log("right = ", enemyBulletMovingRight);
+            //     console.log("left = ", enemyBulletMovingLeft);
+
+
+
 
         }
         // // if (  cursors.left.isDown)
@@ -482,145 +595,145 @@
         // // }
         // // else if (cursors.right.isDown)
         // // {
-        // //     player.setVelocityX(160);
+        //     player.setVelocityX(160);
 
-        // //     player.anims.play('right', true);
-        // // }
-        // // else
-        // // {
-        // //    // player.setVelocityX(0);
+        //     player.anims.play('right', true);
+        // }
+        // else
+        // {
+        //    // player.setVelocityX(0);
 
-        // //    // player.anims.play('turn');
-        // // }
+        //    // player.anims.play('turn');
+        // }
 
-        // // if (cursors.up.isDown)
-        // // {
-        // //     player.setVelocityY(-160);
-        // // }
-        // // else
-        // // {
-        // //     //player.setVelocityY(0);
-        // // }
+        // if (cursors.up.isDown)
+        // {
+        //     player.setVelocityY(-160);
+        // }
+        // else
+        // {
+        //     //player.setVelocityY(0);
+        // }
 
-        // // if (cursors.down.isDown)
-        // // {
-        // //     player.setVelocityY(160);
-        // //     //console.log("Hello");
-        // // }
+        // if (cursors.down.isDown)
+        // {
+        //     player.setVelocityY(160);
+        //     //console.log("Hello");
+        // }
 
-        // // if (!cursors.down.isDown && !cursors.up.isDown)
-        // // {
-        // //     //player.setVelocityY(0);
-        // // }
+        // if (!cursors.down.isDown && !cursors.up.isDown)
+        // {
+        //     //player.setVelocityY(0);
+        // }
 
-        // if (playerSelected[0] !== null) {
+        if (playerSelected[0] !== null) {
 
-        //     if (movingRight === true)
-        //     {
+            if (movingRight === true)
+            {
 
-        //         console.log(playerSelected[0]);
+                console.log(playerSelected[0]);
 
-        //         playerSelected[0].setVelocityX(160);
-        //         //playerSelected[0].anims.play('right', true);
+                playerSelected[0].setVelocityX(160);
+                //playerSelected[0].anims.play('right', true);
 
-        //         //console.log("mright");
-        //         //playerMoving = false;
+                //console.log("mright");
+                //playerMoving = false;
 
-        //         if (playerSelected[0].x >= movingTo[0]) {
-        //             movingRight = false;
-        //             console.log("x coordinates equal");
-        //            // playerSelected[0].anims.play('turn');
-        //             if (playerSelected[0]) playerSelected[0].setVelocityX(0);
-        //           //  playerSelected[0] = false;
-
-
-        //             if (playerSelected[2] > movingTo[1]) {
-        //                 movingUp = true;
-        //             }
-
-        //             else if (playerSelected[2] < movingTo[1]) {
-        //                 movingDown = true;
-        //             }
-
-        //             else {
-        //                 playerSelected[0] = null;
-        //             }
-        //         }
-        //     }
-
-        //     if (movingUp === true)
-        //     {
-
-        //         playerSelected[0].setVelocityY(-160);
-
-        //         if (playerSelected[0].y <= movingTo[1]) {
-        //             movingUp = false;
-        //             console.log("Y coordinates are equal");
-        //           //  player.anims.play('turn');
-        //             if (playerSelected[0]) playerSelected[0].setVelocityY(0);
-        //             playerSelected[0] = null;
-        //         }
-        //     }
-
-        //     if (movingLeft === true)
-        //     {
-
-        //         //playerSelected[0] = player;
-        //         if (playerSelected[0]) playerSelected[0].setVelocityX(-160);
-        //        // player.anims.play('left', true);
-
-        //         if (playerSelected[0].x <= movingTo[0]) {
-
-        //             movingLeft = false;
-        //             if (playerSelected[0]) playerSelected[0].setVelocityX(0);
-        //           //  playerSelected[0] = {};
-
-        //             if (playerSelected[2] > movingTo[1]) {
-        //                 movingUp = true;
-        //             }
-
-        //             else if (playerSelected[2] < movingTo[1]) {
-        //                 movingDown = true;
-        //             }
-
-        //             else {
-        //                 playerSelected[0] = null;
-        //             }
+                if (playerSelected[0].x >= movingTo[0]) {
+                    movingRight = false;
+                    console.log("x coordinates equal");
+                   // playerSelected[0].anims.play('turn');
+                    if (playerSelected[0]) playerSelected[0].setVelocityX(0);
+                  //  playerSelected[0] = false;
 
 
-        //         }
-        //         //playerMoving = false;
-        //        // console.log("mleft");
-        //     }
+                    if (playerSelected[2] > movingTo[1]) {
+                        movingUp = true;
+                    }
 
-        //     if (movingDown === true)
-        //     {
+                    else if (playerSelected[2] < movingTo[1]) {
+                        movingDown = true;
+                    }
+
+                    else {
+                        playerSelected[0] = null;
+                    }
+                }
+            }
+
+            if (movingUp === true)
+            {
+
+                playerSelected[0].setVelocityY(-160);
+
+                if (playerSelected[0].y <= movingTo[1]) {
+                    movingUp = false;
+                    console.log("Y coordinates are equal");
+                  //  player.anims.play('turn');
+                    if (playerSelected[0]) playerSelected[0].setVelocityY(0);
+                    playerSelected[0] = null;
+                }
+            }
+
+            if (movingLeft === true)
+            {
+
+                //playerSelected[0] = player;
+                if (playerSelected[0]) playerSelected[0].setVelocityX(-160);
+               // player.anims.play('left', true);
+
+                if (playerSelected[0].x <= movingTo[0]) {
+
+                    movingLeft = false;
+                    if (playerSelected[0]) playerSelected[0].setVelocityX(0);
+                  //  playerSelected[0] = {};
+
+                    if (playerSelected[2] > movingTo[1]) {
+                        movingUp = true;
+                    }
+
+                    else if (playerSelected[2] < movingTo[1]) {
+                        movingDown = true;
+                    }
+
+                    else {
+                        playerSelected[0] = null;
+                    }
 
 
-        //         playerSelected[0].setVelocityY(160);
-        //         // player.anims.play('turn');
-        //         // playerMoving = false;
-        //         if (playerSelected[0].y >= movingTo[1]) {
-        //             movingDown = false;
-        //             console.log("Y coordinates are equal");
-        //           //  player.anims.play('turn');
+                }
+                //playerMoving = false;
+               // console.log("mleft");
+            }
 
-        //             playerSelected[0].setVelocityY(0);
+            if (movingDown === true)
+            {
 
-        //             playerSelected[0] = null;
 
-        //         }
-        //     }
+                playerSelected[0].setVelocityY(160);
+                // player.anims.play('turn');
+                // playerMoving = false;
+                if (playerSelected[0].y >= movingTo[1]) {
+                    movingDown = false;
+                    console.log("Y coordinates are equal");
+                  //  player.anims.play('turn');
 
-        //     // if (this.input.on('pointerdown')) {
-        //     //     console.log("Spoon");
-        //     // }
+                    playerSelected[0].setVelocityY(0);
 
-        //     //console.log("player.x = ", player.x);
+                    playerSelected[0] = null;
 
-        //     //console.log("moving down is", movingDown);
+                }
+            }
 
-       // }
+            // if (this.input.on('pointerdown')) {
+            //     console.log("Spoon");
+            // }
+
+            //console.log("player.x = ", player.x);
+
+            //console.log("moving down is", movingDown);
+
+       }
     }
 
     function clickFunc(player)
@@ -1369,8 +1482,6 @@
         bullet.x = bulletCoor[0] - 5;
         bullet.y = bulletCoor[1] - 5;
 
-        //check if the hero is above or below the enemy
-
         let x;
         let y;
 
@@ -1379,41 +1490,31 @@
 
         let angle = Phaser.Math.Angle.Between(heroCoor[0], heroCoor[1], enemyCoor[0], enemyCoor[1]);
 
-       // timedEvent = .time.delayedCall(100, {}, [], this);
-
-        //angle = angle / 0.01745329252;
-
-        console.log("angle = ", angle);
-
         x = Math.cos(angle) * 200;
-
         y = Math.sin(angle) * 200;
-
-        // if (heroPos[1] > enemyPos[1]) {
-
-        //     bullet.setVelocityY(y);
-        // } else {
-        //     bullet.setVelocityY(y);
-        // }
-
-        // if (heroPos[0] > enemyPos[0]) {
-
-        //     bullet.setVelocityX(x);
-        // } else {
-
-        //     bullet.setVelocityX(x);
-        // }
-
-
-
 
         bullet.setVelocityX(-x);
         bullet.setVelocityY(-y);
         // bullet.setAccelerationY(100);
 
 
-        // console.log("tihs occuredd");
-        // bomb.alive = true;
+        //game.physics.arcade.moveToXY(bullet, player.x, player.y, 0, 3000);
+
+        enemyBulletMoving = true;
+
+        if (x > 0) {
+            enemyBulletMovingLeft = true;
+        } else if (x < 0) {
+            enemyBulletMovingRight = true;
+        }
+
+        if (y > 0) {
+            enemyBulletMovingUp = true;
+        } else if (y < 0) {
+            enemyBulletMovingDown = true;
+        }
+
+        enemyBulletMovingTo = heroPos;
     }
 
 </script>
