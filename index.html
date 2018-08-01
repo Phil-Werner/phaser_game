@@ -58,6 +58,7 @@
     let enemyBulletMovingRight = false;
     let enemyBulletMovingUp = false;
     let enemyBulletMovingDown = false;
+    let selff;
 
 
     var grid =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -340,58 +341,66 @@
                            //      movingDown = true;
                            //  }
 
-                        var playerTween = this.tweens.add({
-                            targets: player,
-                            x: hexClickedCoor[0],
-                            y: hexClickedCoor[1] - 15,
-                            duration: 500,
-                        });
+                           console.log("this = ", this);
+
+                            selff = this;
+
+                            if (player.x > hexClickedCoor[0]) {
+                                player.anims.play('left', true);
+                            } else {
+                                player.anims.play('right', true);
+                            }
+
+                            var playerTween = this.tweens.add({
+                                targets: player,
+                                x: hexClickedCoor[0],
+                                y: hexClickedCoor[1] - 15,
+                                duration: 500,
+                                onComplete: function() {
+
+
 
                        // heroCoor = hexClicked;
                        // heroCoorCoor = calculateCoordinates(heroCoor);
 
-                        grid[heroCoor[1]][heroCoor[0]] = 0;
-                        heroCoor = hexClicked;
-                        destination = hexClicked;
-                        grid[hexClicked[1]][hexClicked[0]] = 1;
+                                    grid[heroCoor[1]][heroCoor[0]] = 0;
+                                    heroCoor = hexClicked;
+                                    destination = hexClicked;
+                                    grid[hexClicked[1]][hexClicked[0]] = 1;
 
-                        heroCoorCoor = calculateCoordinates(heroCoor);
+                                    player.anims.stop();
 
-                        let heroesInRange = determineHeroesInRange(enemyCoor, 10);
+                                    heroCoorCoor = calculateCoordinates(heroCoor);
 
-                        if (heroesInRange.length >= 1) {
+                                    let heroesInRange = determineHeroesInRange(enemyCoor, 10);
 
-                            console.log("got here purple");
+                                    if (heroesInRange.length >= 1) {
+
+                          //  console.log("got here purple");
                           //  enemyRangedAttack();
 
-                            let bulletCoor = calculateCoordinates(enemyCoor);
-                            bullet.setActive(true);
-                            bullet.setVisible(true);
-                            bullet.x = bulletCoor[0] - 5;
-                            bullet.y = bulletCoor[1] - 5;
+                                        let bulletCoor = calculateCoordinates(enemyCoor);
+                                        bullet.setActive(true);
+                                        bullet.setVisible(true);
+                                        bullet.x = bulletCoor[0] - 5;
+                                        bullet.y = bulletCoor[1] - 5;
 
-                            var bulletTween = this.tweens.add({
-                                targets: bullet,
-                                x: heroCoorCoor[0] - 5,
-                                y: heroCoorCoor[1] - 10,
-                                duration: 600,
-                                onComplete: function () {
-                                    bullet.setActive(false);
-                                    bullet.setVisible(false);
-                                },
+                                        var bulletTween = selff.tweens.add({
+                                            targets: bullet,
+                                            x: heroCoorCoor[0] - 5,
+                                            y: heroCoorCoor[1] - 10,
+                                            duration: 600,
+                                            onComplete: function () {
+                                                bullet.setActive(false);
+                                                bullet.setVisible(false);
+                                            },
+                                        });
+                                    }
+                                }
                             });
-
                         }
-
-
-
-
-                        }
-
                     }
-
                // }
-
             }
 
             // console.log("AAA", playerSelected[0]);
