@@ -230,7 +230,7 @@
                             //let coordinates = calculateCoordinates([2, 24]);
                             let coordinates;
 
-                            availableMoves = generateAvailableMoves(heroCoor, 6);
+                            availableMoves = generateAvailableMoves(heroCoor, 10);
 
                            // console.log(availableMoves);
 
@@ -337,7 +337,7 @@
                            //      movingDown = true;
                            //  }
 
-                           console.log("this = ", this);
+                           //console.log("this = ", this);
 
                             selfScene = this;
 
@@ -375,7 +375,7 @@
                                                // console.log("!#####################");
                                                // console.log("player.x =", player.x, "currentCoor[0] = ", currentCoor[0]);
 
-                                               console.log("hexPath")
+                                               //console.log("hexPath")
 
                                                 if (player.x > calculateCoordinates(hexPath[currentIndex])[0]) {
 
@@ -1401,6 +1401,8 @@
         let keepPushing = true;
         //let subRange = range;
        // let elementsUntilDepthIncrease = 0;
+       // let nextElementsUntilDepthIncrease = 0;
+       // let depth = 0;
        // let temp;
 
 
@@ -1961,7 +1963,7 @@
                 }
 
                 //down left
-                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[0] - 1 >= 0 && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
 
                     frontier.push([coor[0], coor[1] + 1]);
                     visited.push([coor[0], coor[1] + 1]);
@@ -2029,9 +2031,9 @@
 
         //console.log(cameFromGrid[0][0], cameFromGrid[1][0], cameFromGrid[2][0], cameFromGrid[3][0], cameFromGrid[4][0], cameFromGrid[5][0]);
         //console.log(cameFromGrid);
-        console.log(cameFromGrid);
+       // console.log(cameFromGrid);
 
-        console.log("came from grid at 2,2 =", cameFromGrid[2][2]);
+       // console.log("came from grid at 2,2 =", cameFromGrid[2][2]);
 
         return output;
     }
