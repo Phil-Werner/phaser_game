@@ -1662,10 +1662,11 @@
         let frontier = [];
         let visited = [pos];
         let coor;
-        //let depth = 0;
         let keepPushing = true;
         //let subRange = range;
-       // let elementsUntilDepthIncrease = 0;
+        let elementsUntilDepthIncrease = 0;
+        let nextElementsUntilDepthIncrease = 0;
+        let depth = 0;
        // let temp;
 
         cameFromGrid =     [[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
@@ -1709,7 +1710,7 @@
 
             // up left
 
-            if (pos[0] - 1 >= 0 && pos[1] - 1 >= 0) {
+            if (pos[0] - 1 >= 0 && pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0] - 1] === 0) {
                 frontier.push([pos[0] - 1, pos[1] - 1]);
                 visited.push([pos[0] - 1, pos[1] - 1]);
 
@@ -1718,7 +1719,7 @@
 
             // left
 
-            if (pos[0] - 1 >= 0) {
+            if (pos[0] - 1 >= 0 && grid[pos[1]][pos[0] - 1] === 0) {
                 frontier.push([pos[0] - 1, pos[1]]);
                 visited.push([pos[0] - 1, pos[1]]);
 
@@ -1726,7 +1727,7 @@
             }
 
             // down left
-            if (pos[0] - 1 >= 0 && pos[1] + 1 <= MAXHEIGHT) {
+            if (pos[0] - 1 >= 0 && pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0] - 1] === 0) {
                 frontier.push([pos[0] - 1, pos[1] + 1]);
                 visited.push([pos[0] - 1, pos[1] + 1]);
 
@@ -1734,7 +1735,7 @@
             }
 
             // down right
-            if (pos[1] + 1 <= MAXHEIGHT) {
+            if (pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0]] === 0) {
                 frontier.push([pos[0], pos[1] + 1]);
                 visited.push([pos[0], pos[1] + 1]);
 
@@ -1742,7 +1743,7 @@
             }
 
             // right
-            if (pos[0] + 1 <= MAXWIDTH) {
+            if (pos[0] + 1 <= MAXWIDTH && grid[pos[1]][pos[0] + 1] === 0) {
                 frontier.push([pos[0] + 1, pos[1]]);
                 visited.push([pos[0] + 1, pos[1]]);
 
@@ -1750,7 +1751,7 @@
             }
 
             // up right
-            if (pos[1] - 1 >= 0) {
+            if (pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0]] === 0) {
                 frontier.push([pos[0], pos[1] - 1]);
                 visited.push([pos[0], pos[1] - 1]);
 
@@ -1763,7 +1764,7 @@
            // console.log("BOOOOOOOOM");
 
             //up left
-            if (pos[1] - 1 >= 0) {
+            if (pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0]] === 0) {
                 frontier.push([pos[0], pos[1] - 1]);
                 visited.push([pos[0], pos[1] - 1]);
 
@@ -1771,7 +1772,7 @@
             }
 
             // left
-            if (pos[0] - 1 >= 0) {
+            if (pos[0] - 1 >= 0 && grid[pos[1]][pos[0] - 1] === 0) {
                 frontier.push([pos[0] - 1, pos[1]]);
                 visited.push([pos[0] - 1, pos[1]]);
 
@@ -1779,7 +1780,7 @@
             }
 
             // down left
-            if (pos[1] + 1 <= MAXHEIGHT) {
+            if (pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0]] === 0) {
                 frontier.push([pos[0], pos[1] + 1]);
                 visited.push([pos[0], pos[1] + 1]);
 
@@ -1787,7 +1788,7 @@
             }
 
             // down right
-            if (pos[0] + 1 <= MAXWIDTH && pos[1] + 1 <= MAXHEIGHT) {
+            if (pos[0] + 1 <= MAXWIDTH && pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0] + 1] === 0) {
                 frontier.push([pos[0] + 1, pos[1] + 1]);
                 visited.push([pos[0] + 1, pos[1] + 1]);
 
@@ -1796,7 +1797,7 @@
             }
 
             // right
-            if (pos[0] + 1 <= MAXWIDTH) {
+            if (pos[0] + 1 <= MAXWIDTH && grid[pos[1]][pos[0] + 1] === 0) {
                 frontier.push([pos[0] + 1, pos[1]]);
                 visited.push([pos[0] + 1, pos[1]]);
 
@@ -1804,7 +1805,7 @@
             }
 
             // up right
-            if (pos[0] + 1 <= MAXWIDTH && pos[1] - 1 >= 0) {
+            if (pos[0] + 1 <= MAXWIDTH && pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0] + 1] === 0) {
                 frontier.push([pos[0] + 1, pos[1] - 1]);
                 visited.push([pos[0] + 1, pos[1] - 1]);
 
@@ -1846,7 +1847,7 @@
 
 
                 // up left
-                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] - 1]) && coor[0] - 1 >= 0 && coor[1] - 1 >= 0 && keepPushing ) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] - 1]) && coor[0] - 1 >= 0 && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0] - 1] === 0 && keepPushing ) {
 
                     frontier.push([coor[0] - 1, coor[1] - 1]);
                     visited.push([coor[0] - 1, coor[1] - 1]);
@@ -1859,7 +1860,7 @@
                 }
 
                 // left
-                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && grid[coor[1]][coor[0] - 1] === 0 && keepPushing) {
 
                     frontier.push([coor[0] - 1, coor[1]]);
                     visited.push([coor[0] - 1, coor[1]]);
@@ -1878,7 +1879,7 @@
 
 
                 // down left
-                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] + 1]) && coor[0] - 1 >= 0 && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] + 1]) && coor[0] - 1 >= 0 && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0] - 1] === 0 && keepPushing) {
 
                     frontier.push([coor[0] - 1, coor[1] + 1]);
                     visited.push([coor[0] - 1, coor[1] + 1]);
@@ -1891,7 +1892,7 @@
                 }
 
                 // down right
-                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0]] === 0 && keepPushing) {
 
                     frontier.push([coor[0], coor[1] + 1]);
                     visited.push([coor[0], coor[1] + 1]);
@@ -1905,7 +1906,7 @@
                 }
 
                 // right
-                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && grid[coor[1]][coor[0] + 1] === 0 && keepPushing) {
 
                     frontier.push([coor[0] + 1, coor[1]]);
                     visited.push([coor[0] + 1, coor[1]]);
@@ -1919,7 +1920,7 @@
                 }
 
                 // up right
-                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0]] === 0 && keepPushing) {
 
                     frontier.push([coor[0], coor[1] - 1]);
                     visited.push([coor[0], coor[1] - 1]);
@@ -1935,7 +1936,7 @@
             } else {  //odd rows
 
                 //up left
-                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0]] === 0 && keepPushing) {
 
                     frontier.push([coor[0], coor[1] - 1]);
                     visited.push([coor[0], coor[1] - 1]);
@@ -1949,7 +1950,7 @@
                 }
 
                 // left
-                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && grid[coor[1]][coor[0] - 1] === 0 && keepPushing) {
 
                     frontier.push([coor[0] - 1, coor[1]]);
                     visited.push([coor[0] - 1, coor[1]]);
@@ -1963,7 +1964,7 @@
                 }
 
                 //down left
-                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0]] === 0 && keepPushing) {
 
                     frontier.push([coor[0], coor[1] + 1]);
                     visited.push([coor[0], coor[1] + 1]);
@@ -1977,7 +1978,7 @@
                 }
 
                 //down right
-                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] + 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] + 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0] + 1] === 0 && keepPushing) {
 
                     frontier.push([coor[0] + 1, coor[1] + 1]);
                     visited.push([coor[0] + 1, coor[1] + 1]);
@@ -1991,7 +1992,7 @@
                 }
 
                 //right
-                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && grid[coor[1]][coor[0] + 1] === 0 && keepPushing) {
 
                     frontier.push([coor[0] + 1, coor[1]]);
                     visited.push([coor[0] + 1, coor[1]]);
@@ -2005,7 +2006,7 @@
                 }
 
                 //up right
-                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] - 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] - 1 >= 0 && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] - 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0] + 1] === 0 && keepPushing) {
 
                     frontier.push([coor[0] + 1, coor[1] - 1]);
                     visited.push([coor[0] + 1, coor[1] - 1]);
