@@ -89,10 +89,21 @@
     var heroCoor = [3, 3];
     var enemyCoor = [20, 5];
 
+    var enemyBCoor = [23, 5];
+
+    var enemyCCoor = [24, 6];
+
     //console.log(heroCoor[0]);
 
     grid[heroCoor[1]][heroCoor[0]] = 1;
     grid[enemyCoor[1]][enemyCoor[0]] = 2;
+    grid[enemyBCoor[1]][enemyBCoor[0]] = 2;
+    grid[enemyCCoor[1]][enemyCCoor[0]] = 2;
+
+    grid[4][23] = 2;
+    grid[3][22] = 2;
+    grid[2][22] = 2;
+    grid[1][21] = 2;
 
 
     var game = new Phaser.Game(config);
@@ -143,12 +154,20 @@
 
         let startingCoordinates = calculateCoordinates([heroCoor[0], heroCoor[1]]);
         let enemyStarCoor = calculateCoordinates([enemyCoor[0], enemyCoor[1]]);
+        let enemyBStartCoor = calculateCoordinates([enemyBCoor[0], enemyBCoor[1]]);
+        let enemyCStartCoor = calculateCoordinates([enemyCCoor[0], enemyCCoor[1]]);
 
         player = this.physics.add.sprite(startingCoordinates[0], startingCoordinates[1] - 15, 'dude');
 
         enemy = this.physics.add.sprite(enemyStarCoor[0], enemyStarCoor[1] - 15, 'dude');
         enemy.setTint(0xff0000);
         enemy.depth = 2;
+
+        enemyB = this.physics.add.sprite(enemyBStartCoor[0], enemyBStartCoor[1] - 15, 'dude');
+        enemyB.setTint(0xff0000);
+
+        enemyC = this.physics.add.sprite(enemyCStartCoor[0], enemyCStartCoor[1] - 15, 'dude');
+        enemyC.setTint(0xff0000);
 
 
 //        star = this.physics.add.sprite(400, 450, 'star');
@@ -230,7 +249,7 @@
                             //let coordinates = calculateCoordinates([2, 24]);
                             let coordinates;
 
-                            availableMoves = generateAvailableMoves(heroCoor, 10);
+                            availableMoves = generateAvailableMoves(heroCoor, 7);
 
                            // console.log(availableMoves);
 
@@ -961,9 +980,9 @@
 
     output.push(hex);
 
-    console.log("We made it captain!");
+   // console.log("We made it captain!");
 
-    console.log("path = ", output);
+  //  console.log("path = ", output);
     return output;
 
 
@@ -1664,9 +1683,12 @@
         let coor;
         let keepPushing = true;
         //let subRange = range;
-        let elementsUntilDepthIncrease = 0;
-        let nextElementsUntilDepthIncrease = 0;
-        let depth = 0;
+       // let elementsUntilDepthIncrease = 0;
+       // let nextElementsUntilDepthIncrease = 0;
+      //  let elementsCounter = 0;
+       // let depth = 0;
+       // let visitedNextArray = [];
+
        // let temp;
 
         cameFromGrid =     [[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
@@ -1715,6 +1737,7 @@
                 visited.push([pos[0] - 1, pos[1] - 1]);
 
                 cameFromGrid[pos[1] - 1][pos[0] - 1] = pos;
+             //   elementsUntilDepthIncrease++;
             }
 
             // left
@@ -1724,6 +1747,8 @@
                 visited.push([pos[0] - 1, pos[1]]);
 
                 cameFromGrid[pos[1]][pos[0] - 1] = pos;
+             //   elementsUntilDepthIncrease++;
+
             }
 
             // down left
@@ -1732,6 +1757,7 @@
                 visited.push([pos[0] - 1, pos[1] + 1]);
 
                 cameFromGrid[pos[1] + 1][pos[0] - 1] = pos;
+              ///  elementsUntilDepthIncrease++;
             }
 
             // down right
@@ -1740,6 +1766,7 @@
                 visited.push([pos[0], pos[1] + 1]);
 
                 cameFromGrid[pos[1] + 1][pos[0]] = pos;
+              //  elementsUntilDepthIncrease++;
             }
 
             // right
@@ -1748,6 +1775,7 @@
                 visited.push([pos[0] + 1, pos[1]]);
 
                 cameFromGrid[pos[1]][pos[0] + 1] = pos;
+             //   elementsUntilDepthIncrease++;
             }
 
             // up right
@@ -1756,6 +1784,7 @@
                 visited.push([pos[0], pos[1] - 1]);
 
                 cameFromGrid[pos[1] - 1][pos[0]] = pos;
+              //  elementsUntilDepthIncrease++;
             }
 
         // odd rows
@@ -1769,6 +1798,7 @@
                 visited.push([pos[0], pos[1] - 1]);
 
                 cameFromGrid[pos[1] - 1][pos[0]] = pos;
+              //  elementsUntilDepthIncrease++;
             }
 
             // left
@@ -1777,6 +1807,7 @@
                 visited.push([pos[0] - 1, pos[1]]);
 
                 cameFromGrid[pos[1]][pos[0] - 1] = pos;
+             //   elementsUntilDepthIncrease++;
             }
 
             // down left
@@ -1785,6 +1816,7 @@
                 visited.push([pos[0], pos[1] + 1]);
 
                 cameFromGrid[pos[1] + 1][pos[0]] = pos;
+             //   elementsUntilDepthIncrease++;
             }
 
             // down right
@@ -1793,6 +1825,7 @@
                 visited.push([pos[0] + 1, pos[1] + 1]);
 
                 cameFromGrid[pos[1] + 1][pos[0] + 1] = pos;
+             //   elementsUntilDepthIncrease++;
 
             }
 
@@ -1802,6 +1835,7 @@
                 visited.push([pos[0] + 1, pos[1]]);
 
                 cameFromGrid[pos[1]][pos[0] + 1] = pos;
+             //   elementsUntilDepthIncrease++;
             }
 
             // up right
@@ -1810,8 +1844,12 @@
                 visited.push([pos[0] + 1, pos[1] - 1]);
 
                 cameFromGrid[pos[1] - 1][pos[0] + 1] = pos;
+               // elementsUntilDepthIncrease++;
             }
         }
+
+       // visitedNextArray = visited.slice(0);
+        //console.log("visitedNextArray = ", visitedNextArray);
 
         while (frontier.length !== 0) {
 
@@ -1824,7 +1862,31 @@
 
             keepPushing = true;
 
+           // elementsCounter++;
+
+            // if (elementsCounter === elementsUntilDepthIncrease) {
+
+            //     console.log("elementsCounter = ", elementsCounter);
+            //     console.log("elementsUntilDepthIncrease = ", elementsUntilDepthIncrease);
+            //     console.log("nextElementsUntilDepthIncrease = ", nextElementsUntilDepthIncrease);
+
+            //     elementsUntilDepthIncrease = nextElementsUntilDepthIncrease;
+            //     nextElementsUntilDepthIncrease = 0;
+            //     elementsCounter = 0;
+            //     depth++;
+            // }
+
+           // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0], coor[1]);
+
+           // console.log("depth = ", depth);
+
             //console.log("depth of coor for coor=", coor, " depth = ", determineDepth(coor, pos));
+
+            // if (depth >= range) {
+            //     keepPushing = false;
+            // } else {
+            //     keepPushing = true;
+            // }
 
             if (determineDepth(coor, pos) > range) {
                 keepPushing = false;
@@ -1853,6 +1915,9 @@
                     visited.push([coor[0] - 1, coor[1] - 1]);
 
                     cameFromGrid[coor[1] - 1][coor[0] - 1] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] - 1, coor[1] - 1);
+
+                    //console.log("A");
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
@@ -1866,11 +1931,14 @@
                     visited.push([coor[0] - 1, coor[1]]);
 
                     cameFromGrid[coor[1]][coor[0] - 1] = coor;
+                  //  nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] - 1, coor[1]);
 
-                    if (arrayIncludesCoordinates([coor], [3,2])) {
-                        console.log("coor = ", coor);
-                        console.log("cameFromGrid at 2,2 = ", cameFromGrid[2][2]);
-                    }
+                   // console.log("B");
+
+                    // if (arrayIncludesCoordinates([coor], [3,2])) {
+                    //     console.log("coor = ", coor);
+                    //     console.log("cameFromGrid at 2,2 = ", cameFromGrid[2][2]);
+                    // }
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
@@ -1885,7 +1953,10 @@
                     visited.push([coor[0] - 1, coor[1] + 1]);
 
                     cameFromGrid[coor[1] + 1][coor[0] - 1] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] - 1, coor[1] + 1);
 
+
+                   // console.log("C");
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
@@ -1898,10 +1969,13 @@
                     visited.push([coor[0], coor[1] + 1]);
 
                     cameFromGrid[coor[1] + 1][coor[0]] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0], coor[1] + 1);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                   // console.log("D");
 
                 }
 
@@ -1912,10 +1986,13 @@
                     visited.push([coor[0] + 1, coor[1]]);
 
                     cameFromGrid[coor[1]][coor[0] + 1] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] + 1, coor[1]);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                   // console.log("E");
 
                 }
 
@@ -1926,10 +2003,13 @@
                     visited.push([coor[0], coor[1] - 1]);
 
                     cameFromGrid[coor[1] - 1][coor[0]] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0], coor[1] - 1);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                  //  console.log("F");
 
                 }
 
@@ -1942,10 +2022,13 @@
                     visited.push([coor[0], coor[1] - 1]);
 
                     cameFromGrid[coor[1] - 1][coor[0]] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0], coor[1] - 1);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                  //  console.log("G");
 
                 }
 
@@ -1956,10 +2039,13 @@
                     visited.push([coor[0] - 1, coor[1]]);
 
                     cameFromGrid[coor[1]][coor[0] - 1] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] - 1, coor[1]);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                 //   console.log("H");
 
                 }
 
@@ -1970,10 +2056,13 @@
                     visited.push([coor[0], coor[1] + 1]);
 
                     cameFromGrid[coor[1] + 1][coor[0]] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0], coor[1] + 1);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                  //  console.log("I");
 
                 }
 
@@ -1984,10 +2073,13 @@
                     visited.push([coor[0] + 1, coor[1] + 1]);
 
                     cameFromGrid[coor[1] + 1][coor[0] + 1] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] + 1, coor[1] + 1);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                 //   console.log("J");
 
                 }
 
@@ -1998,10 +2090,13 @@
                     visited.push([coor[0] + 1, coor[1]]);
 
                     cameFromGrid[coor[1]][coor[0] + 1] = coor;
+                   // nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] + 1, coor[1]);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                //    console.log("K");
 
                 }
 
@@ -2012,10 +2107,13 @@
                     visited.push([coor[0] + 1, coor[1] - 1]);
 
                     cameFromGrid[coor[1] - 1][coor[0] + 1] = coor;
+                  //  nextElementsUntilDepthIncrease += determineNumberOfChildren(coor[0] + 1, coor[1] - 1);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
                     // }
+
+                  //  console.log("L");
 
 
                 }
@@ -2036,7 +2134,178 @@
 
        // console.log("came from grid at 2,2 =", cameFromGrid[2][2]);
 
+       let path;
+
+     //  console.log("output = ", output);
+
+       for (let i = output.length - 1; i >= 0; i--) {
+
+          //  console.log("output[i] = ", output[i]);
+
+            path = determinePath(output[i]);
+
+           // console.log("path.length = ", path.length);
+
+            if (path.length > range) {
+
+             //   console.log("path.length = ", path.length);
+              //  console.log("range = ", range);
+
+                output.splice(i, 1);
+            }
+
+
+       }
+
+
+
         return output;
+
+
+
+        function determineNumberOfChildren(x, y) {
+            let numberOfChildren = 0;
+
+
+            //console.log("visited length = ", visited.length);
+
+            //even rows
+
+            if (y % 2 === 0) {
+
+                // up left
+                if (y - 1 >= 0 && x - 1 >= 0) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y - 1])) {
+                        visitedNextArray.push([x - 1, y - 1]);
+                        if (grid[y - 1][x - 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                // left
+                if (x - 1 >= 0) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y])) {
+                        visitedNextArray.push([x - 1, y]);
+                        if (grid[y][x - 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                // down left
+                if (y + 1 <= MAXHEIGHT && x - 1 >= 0) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y + 1])) {
+                        visitedNextArray.push([x - 1, y + 1]);
+                        if (grid[y + 1][x - 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                // down right
+                if (y + 1 <= MAXHEIGHT && x + 1 <= MAXWIDTH) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y + 1])) {
+                        visitedNextArray.push([x + 1, y + 1]);
+                        if (grid[y + 1][x + 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                // right
+                if (x + 1 <= MAXWIDTH) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y])) {
+                        visitedNextArray.push([x + 1, y]);
+                        if (grid[y][x + 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                // up right
+                if (y - 1 >= 0) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x, y - 1])) {
+                        visitedNextArray.push([x, y - 1]);
+                        if (grid[y - 1][x] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+
+            // odd rows
+
+            } else {
+
+                // up left
+                if (y - 1 >= 0) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x, y - 1])) {
+                        visitedNextArray.push([x, y - 1]);
+                        if (grid[y - 1][x] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                // left
+                if (x - 1 >= 0) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y])) {
+                        visitedNextArray.push([x - 1, y]);
+                        if (grid[y][x - 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                //down left
+                if (y + 1 <= MAXHEIGHT) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x, y + 1])) {
+                        visitedNextArray.push([x, y + 1]);
+                        if (grid[y + 1][x] === 0) {
+                            numberOfChildren++;
+                         //   console.log("This is a barrage");
+                        }
+                    }
+                }
+
+                // down right
+                if (x + 1 <= MAXWIDTH && y + 1 <= MAXHEIGHT) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y + 1])) {
+                        visitedNextArray.push([x + 1, y + 1]);
+                        if (grid[y + 1][x + 1] === 0) {
+                            numberOfChildren++;
+                          //  console.log("FUCK");
+                        }
+                    }
+                }
+
+                // right
+                if (x + 1 <= MAXWIDTH) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y])) {
+                        visitedNextArray.push([x + 1, y]);
+                        if (grid[y][x + 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+
+                // up right
+                if (y - 1 >= 0 && x + 1 <= MAXWIDTH) {
+                    if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y - 1])) {
+                        visitedNextArray.push([x + 1, y - 1]);
+                        if (grid[y - 1][x + 1] === 0) {
+                            numberOfChildren++;
+                        }
+                    }
+                }
+            }
+
+            //console.log("visited length = ", visited.length);
+            console.log("numberOfChildren = ", numberOfChildren);
+            return numberOfChildren;
+        }
+
     }
 
 
@@ -2045,6 +2314,142 @@
         //temp = coor;
        //console.log("Frontier = ",frontier, "visited = ", visited, "output = ", output);
 
+
+
+    // function determineNumberOfChildren(x, y) {
+    //     let numberOfChildren = 0;
+
+    //     //even rows
+
+    //     if (y % 2 === 0) {
+
+    //         // up left
+    //         if (y - 1 >= 0 && x - 1 >= 0) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y - 1])) {
+    //                 visitedNextArray.push([x - 1, y - 1]);
+    //                 if (grid[y - 1][x - 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // left
+    //         if (x - 1 >= 0) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y])) {
+    //                 visitedNextArray.push([x - 1, y]);
+    //                 if (grid[y][x - 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // down left
+    //         if (y + 1 <= MAXHEIGHT && x - 1 >= 0) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y + 1])) {
+    //                 visitedNextArray.push([x - 1, y + 1]);
+    //                 if (grid[y + 1][x - 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // down right
+    //         if (y + 1 <= MAXHEIGHT && x + 1 <= MAXWIDTH) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y + 1])) {
+    //                 visitedNextArray.push([x + 1, y + 1]);
+    //                 if (grid[y + 1][x + 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // right
+    //         if (x + 1 <= MAXWIDTH) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y])) {
+    //                 visitedNextArray.push([x + 1, y]);
+    //                 if (grid[y][x + 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // up right
+    //         if (y - 1 >= 0) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x, y - 1])) {
+    //                 visitedNextArray.push([x, y - 1]);
+    //                 if (grid[y - 1][x] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+
+    //     // odd rows
+
+    //     } else {
+
+    //         // up left
+    //         if (y - 1 >= 0) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x, y - 1])) {
+    //                 visitedNextArray.push([x, y - 1]);
+    //                 if (grid[y - 1][x] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // left
+    //         if (x - 1 >= 0) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x - 1, y])) {
+    //                 visitedNextArray.push([x - 1, y]);
+    //                 if (grid[y][x - 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         //down left
+    //         if (y + 1 <= MAXHEIGHT) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x, y + 1])) {
+    //                 visitedNextArray.push([x, y + 1]);
+    //                 if (grid[y + 1][x] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // down right
+    //         if (x + 1 <= MAXWIDTH && y + 1 <= MAXHEIGHT) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y + 1])) {
+    //                 visitedNextArray.push([x + 1, y + 1]);
+    //                 if (grid[y + 1][x + 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // right
+    //         if (x + 1 <= MAXWIDTH) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y])) {
+    //                 visitedNextArray.push([x + 1, y]);
+    //                 if (grid[y][x + 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+
+    //         // up right
+    //         if (y - 1 >= 0 && x + 1 <= MAXWIDTH) {
+    //             if (!arrayIncludesCoordinates(visitedNextArray, [x + 1, y - 1])) {
+    //                 visitedNextArray.push([x + 1, y - 1]);
+    //                 if (grid[y - 1][x + 1] === 0) {
+    //                     numberOfChildren++;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return numberOfChildren;
+    // }
 
     function determineDepth(coord, enemyPos) {
 
