@@ -100,10 +100,12 @@
     grid[enemyBCoor[1]][enemyBCoor[0]] = 2;
     grid[enemyCCoor[1]][enemyCCoor[0]] = 2;
 
-    grid[4][23] = 2;
-    grid[3][22] = 2;
-    grid[2][22] = 2;
-    grid[1][21] = 2;
+    var numLiveEnemies = 3;
+
+    // grid[4][23] = 2;
+    // grid[3][22] = 2;
+    // grid[2][22] = 2;
+    // grid[1][21] = 2;
 
 
     var game = new Phaser.Game(config);
@@ -117,6 +119,17 @@
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('spark', 'assets/blue.png');
         this.load.image('levelOne', 'assets/grid2.png');
+
+        this.load.image('idle1', 'assets/idle1.png');
+        this.load.image('idle2', 'assets/idle2.png');
+        this.load.image('idle3', 'assets/idle3.png');
+        this.load.image('idle4', 'assets/idle4.png');
+        this.load.image('idle5', 'assets/idle5.png');
+        this.load.image('idle6', 'assets/idle6.png');
+        this.load.image('idle7', 'assets/idle7.png');
+        this.load.image('idle8', 'assets/idle8.png');
+        this.load.image('idle9', 'assets/idle9.png');
+        this.load.image('idle10', 'assets/idle10.png');
     }
 
     function create ()
@@ -159,6 +172,8 @@
 
         player = this.physics.add.sprite(startingCoordinates[0], startingCoordinates[1] - 15, 'dude');
 
+       // player.setScale(0.5);
+
         enemy = this.physics.add.sprite(enemyStarCoor[0], enemyStarCoor[1] - 15, 'dude');
         enemy.setTint(0xff0000);
         enemy.depth = 2;
@@ -168,6 +183,8 @@
 
         enemyC = this.physics.add.sprite(enemyCStartCoor[0], enemyCStartCoor[1] - 15, 'dude');
         enemyC.setTint(0xff0000);
+
+        let enemyArray = [enemy, enemyB, enemyC];
 
 
 //        star = this.physics.add.sprite(400, 450, 'star');
@@ -219,6 +236,27 @@
             frameRate: 10,
             repeat: -1
         });
+
+        this.anims.create({
+            key: 'snooze',
+            frames: [
+                { key: 'idle1' },
+                { key: 'idle2' },
+                { key: 'idle3' },
+                { key: 'idle4' },
+                { key: 'idle5' },
+                { key: 'idle6' },
+                { key: 'idle7' },
+                { key: 'idle8' },
+                { key: 'idle9' },
+                { key: 'idle10', duration: 50 }
+            ],
+            frameRate: 8,
+            repeat: -1
+        });
+
+        hero = this.add.sprite(400, 300, 'idle1').play('snooze');
+        hero.setScale(0.15);
 
         cursors = this.input.keyboard.createCursorKeys();
 
@@ -313,7 +351,9 @@
                             let heroCoorCoor = calculateCoordinates(heroCoor);
                             let hexClickedCoor = calculateCoordinates(hexClicked);
 
-                            let hexPath = determinePath(hexClicked);
+                           // console.log("heroCoor = ", heroCoor);
+
+                            let hexPath = determinePath(hexClicked, heroCoor);
 
 
                            //  if (heroCoorCoor[0] < hexClickedCoor[0]) {
@@ -371,7 +411,52 @@
                                 player.anims.play('right');
                             }
 
+                            grid[hexClicked[1]][hexClicked[0]] = 1;
+                            grid[heroCoor[1]][heroCoor[0]] = 0;
+                            heroCoor = hexClicked;
+
                             moveToNextHex(hexPath[currentIndex]);
+
+
+                            //computer's turn logic
+
+                            // for (let i = 0; i < numLiveEnemies; i++) {
+
+                            // if hero is adjacent enemy then attack
+                            //
+                            //
+
+                            //if no hero adjacent then determine closest hero
+                            //consider all tiles around closest hero.  Closest one
+                            //in range, move there then attack
+                            //if closest tile is not in range, determine which tile is closest
+                            //to the tile in range and move there.
+                            //
+
+                            //     let heroIsAdjacent = true;
+
+                            //     if (!heroIsAdjacent) {
+
+                            //         let closestHex = determineHexClosestToHero(enemyArray[i]);
+                            //     }
+
+
+
+                            // }
+
+
+
+
+                            let adjacentHeroCoorsB = determineAdjacentHeroes(enemyBCoor);
+
+                            let adjacentHeroCoorsC = determineAdjacentHeroes(enemyCCoor);
+
+                          //  console.log("Adj hero coors = ", adjacentHeroCoors);
+
+                            console.log("Adj hero coors B = ", adjacentHeroCoorsB);
+
+                            console.log("Adj hero coors C = ", adjacentHeroCoorsC);
+
 
                             function moveToNextHex(nextHex) {
 
@@ -410,14 +495,119 @@
                                             } else {
                                                 player.anims.stop();
                                                 tileIsSelected = false;
-                                                grid[hexClicked[1]][hexClicked[0]] = 1;
-                                                grid[heroCoor[1]][heroCoor[0]] = 0;
-                                                heroCoor = hexClicked;
+
+                                                let adjacentHeroCoors = determineAdjacentHeroes(enemyCoor);
+
+                                                if (adjacentHeroCoors.length === 0) {
+
+
+                                                    //pick hex from six avaiable that is closest.
+                                                    //if theres a tie random select one
+                                                    //move to that hex if you can
+                                                    //other wise move to the closest available hex.  Break ties
+                                                    //with random
+
+                                                    let targetHex = pickHexAdjacentHerotoMoveTo(heroCoor, enemyCoor);
+
+                                                    console.log("targetHex = ", targetHex);
+
+                                                    let enemyRange = 4;
+                                                    let distanceToTarget = determineDepth(targetHex, enemyCoor);
+
+                                                    console.log("Distance to target = ", distanceToTarget);
+
+                                                    if (enemyRange < distanceToTarget) {
+
+                                                    } else {  // target hex is within range of enemy move points
+
+                                                        let enemyAvailableMoves = generateAvailableMoves(enemyCoor, enemyRange);
+                                                        let enemyHexPath = determinePath(targetHex, enemyCoor);
+
+                                                        console.log("enemyHex Path = ", enemyHexPath);
+
+                                                    }
+
+
+                                                } else { // there are nearby heroes
+
+                                                    enemyAttackHero(heroCoor, enemyCoor, enemy);
+
+                                                }
                                             }
                                         }
                                     });
                                 }
                             }
+
+                            function enemyAttackHero(heroAtCoor, enemyAtCoor, enemySprite) {
+
+                                enemySprite.setVelocityX(180);
+                            }
+
+                            function pickHexAdjacentHerotoMoveTo(heroPos, enemyPos) {
+
+                                let hexUpLeft;
+                                let hexLeft;
+                                let hexDownLeft;
+                                let hexDownRight;
+                                let hexRight;
+                                let hexUpRight;
+
+                                if (heroPos[1] % 2 === 0) {
+
+                                    hexUpLeft = [heroPos[0] - 1, heroPos[1] - 1];
+                                    hexLeft = [heroPos[0] - 1, heroPos[1]];
+                                    hexDownLeft = [heroPos[0] - 1, heroPos[1] + 1];
+                                    hexDownRight = [heroPos[0], heroPos[1] + 1];
+                                    hexRight = [heroPos[0] + 1, heroPos[1]];
+                                    hexUpRight = [heroPos[0], heroPos[1] - 1];
+
+                                } else {
+
+                                    hexUpLeft = [heroPos[0], heroPos[1] - 1];
+                                    hexLeft = [heroPos[0] - 1, heroPos[1]];
+                                    hexDownLeft = [heroPos[0], heroPos[1] + 1];
+                                    hexDownRight = [heroPos[0] + 1, heroPos[1] + 1];
+                                    hexRight = [heroPos[0] + 1, heroPos[1]];
+                                    hexUpRight = [heroPos[0] + 1, heroPos[1] - 1];
+
+                                }
+
+                                let distanceHexUpLeft = determineDepth(hexUpLeft, enemyPos);
+                                let distanceHexLeft = determineDepth(hexLeft, enemyPos);
+                                let distanceHexDownLeft = determineDepth(hexDownLeft, enemyPos);
+                                let distanceHexDownRight = determineDepth(hexDownRight, enemyPos);
+                                let distanceHexRight = determineDepth(hexRight, enemyPos);
+                                let distanceHexUpRight = determineDepth(hexUpRight, enemyPos);
+
+                                console.log("distance hex up left =", distanceHexUpLeft);
+                                console.log("distance hex left =", distanceHexLeft);
+                                console.log("distance hex down left =", distanceHexDownLeft);
+                                console.log("distance hex down right =", distanceHexDownRight);
+                                console.log("distance hex right =", distanceHexRight);
+                                console.log("distance hex up right =", distanceHexUpRight);
+
+                                let arrayOfDistances = [hexUpLeft, hexLeft, hexDownLeft, hexDownRight, hexRight, hexUpRight];
+
+
+                                let shortestDistance = determineDepth(arrayOfDistances[0], enemyPos);
+                                let closestIndex = 0;
+
+                                for (let i = 0; i < arrayOfDistances.length; i++) {
+
+                                    if (determineDepth(arrayOfDistances[i], enemyPos) < shortestDistance) {
+                                        shortestDistance = determineDepth(arrayOfDistances[i], enemyPos);
+                                        closestIndex = i;
+                                    }
+                                }
+
+                                console.log("shortestDistance = ", shortestDistance);
+                                console.log("hex = ", arrayOfDistances[closestIndex]);
+
+                                return arrayOfDistances[closestIndex];
+
+                            }
+
 
                             // for (let i = 0; i < hexPath.length; i++) {
 
@@ -953,7 +1143,7 @@
     }
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    function determinePath(hex) {
+    function determinePath(hex, guyCoor) {
 
         let output = [];
 
@@ -962,9 +1152,11 @@
 
        // output.push(currentHex);
 
+     //  console.log("heroCoor 2 = ", heroCoor);
+
     for (let i = 0; i < 1000; i++) {
 
-        if (arrayIncludesCoordinates(heroCoor, currentHex)) break;
+        if (arrayIncludesCoordinates(guyCoor, currentHex)) break;
 
         output.push(currentHex);
 
@@ -984,9 +1176,9 @@
 
   //  console.log("path = ", output);
     return output;
-
-
     }
+
+
 
     function tileCanBeSelected(hex) {
 
@@ -1431,7 +1623,7 @@
         //check if we're starting on an even row
         if (pos[1] % 2 === 0) {
 
-          //  console.log("GOT OVER HERE");
+          //  console.log("GOT OVER HERE");   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
             // up left
             frontier.push([pos[0] - 1, pos[1] - 1]);
@@ -1614,10 +1806,10 @@
                 }
 
                 //down left
-                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] + 1]) && coor[0] - 1 >= 0 && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && keepPushing) {
 
-                    frontier.push([coor[0] - 1, coor[1] + 1]);
-                    visited.push([coor[0] - 1, coor[1] + 1]);
+                    frontier.push([coor[0], coor[1] + 1]);
+                    visited.push([coor[0], coor[1] + 1]);
 
                     // if (depth < range) {
                     //     elementsUntilDepthIncrease++;
@@ -1673,6 +1865,106 @@
         }
 
         return output;
+    }
+
+    function determineAdjacentHeroes(pos) {
+
+        let output = [];
+
+        if (pos[1] % 2 === 0) {
+
+            // up left
+            if (pos[0] - 1 >= 0 && pos[1] - 1 >= 0) {
+                if (grid[pos[1] - 1][pos[0] - 1] === 1) {
+                    output.push([pos[0] - 1, pos[1] - 1]);
+                }
+            }
+
+            // left
+            if (pos[0] - 1 >= 0) {
+                if (grid[pos[1]][pos[0] - 1] === 1) {
+                    output.push([pos[0] - 1, pos[1]]);
+                }
+            }
+
+            // down left
+            if (pos[0] - 1 >= 0 && pos[1] + 1 <= MAXHEIGHT) {
+                if (grid[pos[1] + 1][pos[0] - 1] === 1) {
+                    output.push([pos[0] - 1, pos[1] + 1]);
+                }
+            }
+
+            // down right
+            if (pos[1] + 1 <= MAXHEIGHT) {
+                if (grid[pos[1] + 1][pos[0]] === 1) {
+                    output.push([pos[0], pos[1] + 1]);
+                }
+            }
+
+            // right
+            if (pos[0] + 1 <= MAXWIDTH) {
+                if (grid[pos[1]][pos[0] + 1] === 1) {
+                    output.push([pos[0] + 1, pos[1]]);
+                }
+            }
+
+            // up right
+            if (pos[1] - 1 >= 0) {
+                if (grid[pos[1] - 1][pos[0]] === 1) {
+                    output.push([pos[0], pos[1] - 1]);
+                }
+            }
+
+        } else {    //odd rows
+
+            // up left
+            if (pos[1] - 1 >= 0) {
+                if (grid[pos[1] - 1][pos[0]] === 1) {
+                    output.push([pos[0], pos[1] - 1]);
+                }
+            }
+
+            //left
+            if (pos[0] - 1 >= 0) {
+                if (grid[pos[1]][pos[0] - 1] === 1) {
+                    output.push([pos[0] - 1, pos[1]]);
+                }
+            }
+
+            //down left
+            if (pos[1] + 1 <= MAXHEIGHT) {
+                if (grid[pos[1] + 1][pos[0]] === 1) {
+                    output.push([pos[0], pos[1] + 1]);
+                }
+            }
+
+            //down right
+            if (pos[0] + 1 <= MAXWIDTH && pos[1] + 1 <= MAXHEIGHT) {
+                if (grid[pos[1] + 1][pos[0] + 1] === 1) {
+                    output.push([pos[0] + 1, pos[1] + 1]);
+                }
+            }
+
+            //right
+            if (pos[0] + 1 <= MAXWIDTH) {
+                if (grid[pos[1]][pos[0] + 1] === 1) {
+                    output.push([pos[0] + 1, pos[1]]);
+                }
+            }
+
+            //up right
+            if (pos[1] - 1 >= 0 && pos[0] + 1 <= MAXWIDTH) {
+                if (grid[pos[1] - 1][pos[0] + 1] === 1) {
+                    output.push([pos[0] + 1, pos[1] - 1]);
+                }
+            }
+
+        }
+
+
+        return output;
+
+
     }
 
     function generateAvailableMoves(pos, range) {
@@ -2142,7 +2434,7 @@
 
           //  console.log("output[i] = ", output[i]);
 
-            path = determinePath(output[i]);
+            path = determinePath(output[i], heroCoor);
 
            // console.log("path.length = ", path.length);
 
