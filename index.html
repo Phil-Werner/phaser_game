@@ -16,8 +16,8 @@
 
     var config = {
         type: Phaser.AUTO,
-        width: 800,
-        height: 618,
+        width: 1190,
+        height: 620,
         physics: {
             default: 'arcade',
             arcade: {
@@ -87,11 +87,11 @@
     //grid[21][12] = 2;
 
     var heroCoor = [3, 3];
-    var enemyCoor = [20, 5];
+    var enemyCoor = [10, 5];
 
-    var enemyBCoor = [23, 5];
+    var enemyBCoor = [13, 5];
 
-    var enemyCCoor = [24, 6];
+    var enemyCCoor = [14, 6];
 
     //console.log(heroCoor[0]);
 
@@ -118,7 +118,7 @@
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('spark', 'assets/blue.png');
-        this.load.image('levelOne', 'assets/grid2.png');
+        this.load.image('levelOne', 'assets/grid4.png');
 
         this.load.image('idle1', 'assets/idle1.png');
         this.load.image('idle2', 'assets/idle2.png');
@@ -130,6 +130,66 @@
         this.load.image('idle8', 'assets/idle8.png');
         this.load.image('idle9', 'assets/idle9.png');
         this.load.image('idle10', 'assets/idle10.png');
+
+        this.load.image('run1', 'assets/run1.png');
+        this.load.image('run2', 'assets/run2.png');
+        this.load.image('run3', 'assets/run3.png');
+        this.load.image('run4', 'assets/run4.png');
+        this.load.image('run5', 'assets/run5.png');
+        this.load.image('run6', 'assets/run6.png');
+        this.load.image('run7', 'assets/run7.png');
+        this.load.image('run8', 'assets/run8.png');
+        this.load.image('run9', 'assets/run9.png');
+        this.load.image('run10', 'assets/run10.png');
+
+        this.load.image('runl1', 'assets/runl1.png');
+        this.load.image('runl2', 'assets/runl2.png');
+        this.load.image('runl3', 'assets/runl3.png');
+        this.load.image('runl4', 'assets/runl4.png');
+        this.load.image('runl5', 'assets/runl5.png');
+        this.load.image('runl6', 'assets/runl6.png');
+        this.load.image('runl7', 'assets/runl7.png');
+        this.load.image('runl8', 'assets/runl8.png');
+        this.load.image('runl9', 'assets/runl9.png');
+        this.load.image('runl10', 'assets/runl10.png');
+
+        this.load.image('barbIdle1', 'assets/barbIdleLeft1.png');
+        this.load.image('barbIdle2', 'assets/barbIdleLeft2.png');
+        this.load.image('barbIdle3', 'assets/barbIdleLeft3.png');
+        this.load.image('barbIdle4', 'assets/barbIdleLeft4.png');
+        this.load.image('barbIdle5', 'assets/barbIdleLeft5.png');
+        this.load.image('barbIdle6', 'assets/barbIdleLeft6.png');
+
+        this.load.image('barbWalkLeft1', 'assets/barbWalkLeft1.png');
+        this.load.image('barbWalkLeft2', 'assets/barbWalkLeft2.png');
+        this.load.image('barbWalkLeft3', 'assets/barbWalkLeft3.png');
+        this.load.image('barbWalkLeft4', 'assets/barbWalkLeft4.png');
+        this.load.image('barbWalkLeft5', 'assets/barbWalkLeft5.png');
+        this.load.image('barbWalkLeft6', 'assets/barbWalkLeft6.png');
+        this.load.image('barbWalkLeft7', 'assets/barbWalkLeft7.png');
+        this.load.image('barbWalkLeft8', 'assets/barbWalkLeft8.png');
+        this.load.image('barbWalkLeft9', 'assets/barbWalkLeft9.png');
+        this.load.image('barbWalkLeft10', 'assets/barbWalkLeft10.png');
+        this.load.image('barbWalkLeft11', 'assets/barbWalkLeft11.png');
+        this.load.image('barbWalkLeft12', 'assets/barbWalkLeft12.png');
+        this.load.image('barbWalkLeft13', 'assets/barbWalkLeft13.png');
+        this.load.image('barbWalkLeft14', 'assets/barbWalkLeft14.png');
+
+        this.load.image('barbWalk1', 'assets/barbWalk1.png');
+        this.load.image('barbWalk2', 'assets/barbWalk2.png');
+        this.load.image('barbWalk3', 'assets/barbWalk3.png');
+        this.load.image('barbWalk4', 'assets/barbWalk4.png');
+        this.load.image('barbWalk5', 'assets/barbWalk5.png');
+        this.load.image('barbWalk6', 'assets/barbWalk6.png');
+        this.load.image('barbWalk7', 'assets/barbWalk7.png');
+        this.load.image('barbWalk8', 'assets/barbWalk8.png');
+        this.load.image('barbWalk9', 'assets/barbWalk9.png');
+        this.load.image('barbWalk10', 'assets/bwten.png');
+        this.load.image('barbWalk11', 'assets/barbWalk11.png');
+        this.load.image('barbWalk12', 'assets/barbWalk12.png');
+        this.load.image('barbWalk13', 'assets/barbWalk13.png');
+        this.load.image('barbWalk14', 'assets/barbWalk14.png');
+
     }
 
     function create ()
@@ -139,7 +199,7 @@
         //console.log(gridData[0].length);
         //console.log(gridData.length);
 
-        this.add.image(504, 316, 'levelOne');
+        this.add.image(596, 316, 'levelOne');
 
         // var emitter = this.add.particles('spark').createEmitter({
         //     x: 400,
@@ -170,21 +230,11 @@
         let enemyBStartCoor = calculateCoordinates([enemyBCoor[0], enemyBCoor[1]]);
         let enemyCStartCoor = calculateCoordinates([enemyCCoor[0], enemyCCoor[1]]);
 
-        player = this.physics.add.sprite(startingCoordinates[0], startingCoordinates[1] - 15, 'dude');
+       // player = this.physics.add.sprite(startingCoordinates[0], startingCoordinates[1] - 15, 'dude');
 
        // player.setScale(0.5);
 
-        enemy = this.physics.add.sprite(enemyStarCoor[0], enemyStarCoor[1] - 15, 'dude');
-        enemy.setTint(0xff0000);
-        enemy.depth = 2;
 
-        enemyB = this.physics.add.sprite(enemyBStartCoor[0], enemyBStartCoor[1] - 15, 'dude');
-        enemyB.setTint(0xff0000);
-
-        enemyC = this.physics.add.sprite(enemyCStartCoor[0], enemyCStartCoor[1] - 15, 'dude');
-        enemyC.setTint(0xff0000);
-
-        let enemyArray = [enemy, enemyB, enemyC];
 
 
 //        star = this.physics.add.sprite(400, 450, 'star');
@@ -195,19 +245,19 @@
         //player.setBounce(0);
        // player.setCollideWorldBounds(true);
 
-        player.setInteractive();
+     //   player.setInteractive();
  //       star.setInteractive();
 
-        player.on('clicked', clickFunc, this);
+     //   player.on('clicked', clickFunc, this);
 
-        player.depth = 2;
+
 
  //       star.on('clicked', clickFunc, this);
 
-        bullet = this.physics.add.sprite(0, 0, 'bomb');
+       // bullet = this.physics.add.sprite(0, 0, 'bomb');
 
-        bullet.setActive(false);
-        bullet.setVisible(false);
+       // bullet.setActive(false);
+       // bullet.setVisible(false);
 
         // bomb = new Bullet(0, 0, 'bomb');
         // bomb.alive = false;
@@ -219,7 +269,18 @@
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+             frames: [
+                { key: 'runl1' },
+                { key: 'runl2' },
+                { key: 'runl3' },
+                { key: 'runl4' },
+                { key: 'runl5' },
+                { key: 'runl6' },
+                { key: 'runl7' },
+                { key: 'runl8' },
+                { key: 'runl9' },
+                { key: 'runl10', duration: 50 }
+            ],
             frameRate: 10,
             repeat: -1
         });
@@ -232,8 +293,19 @@
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
+            frames: [
+                { key: 'run1' },
+                { key: 'run2' },
+                { key: 'run3' },
+                { key: 'run4' },
+                { key: 'run5' },
+                { key: 'run6' },
+                { key: 'run7' },
+                { key: 'run8' },
+                { key: 'run9' },
+                { key: 'run10', duration: 50 }
+            ],
+            frameRate: 16,
             repeat: -1
         });
 
@@ -255,12 +327,92 @@
             repeat: -1
         });
 
-        hero = this.add.sprite(400, 300, 'idle1').play('snooze');
-        hero.setScale(0.15);
+        this.anims.create({
+            key: 'barbSnooze',
+            frames: [
+                { key: 'barbIdle1' },
+                { key: 'barbIdle2' },
+                { key: 'barbIdle3' },
+                { key: 'barbIdle4' },
+                { key: 'barbIdle5' },
+                { key: 'barbIdle6', duration: 50 }
+            ],
+            frameRate: 8,
+            repeat: -1
+        });
 
-        cursors = this.input.keyboard.createCursorKeys();
+        this.anims.create({
+            key: 'barbWalkLeft',
+            frames: [
+                { key: 'barbWalkLeft1' },
+                { key: 'barbWalkLeft2' },
+                { key: 'barbWalkLeft3' },
+                { key: 'barbWalkLeft4' },
+                { key: 'barbWalkLeft5' },
+                { key: 'barbWalkLeft6' },
+                { key: 'barbWalkLeft7' },
+                { key: 'barbWalkLeft8' },
+                { key: 'barbWalkLeft9' },
+                { key: 'barbWalkLeft10' },
+                { key: 'barbWalkLeft11' },
+                { key: 'barbWalkLeft12' },
+                { key: 'barbWalkLeft13' },
+                { key: 'barbWalkLeft14', duration: 50 }
+            ],
+            frameRate: 16,
+            repeat: -1
+        });
 
-        this.physics.add.collider(player, platforms);
+         this.anims.create({
+            key: 'barbWalk',
+            frames: [
+                { key: 'barbWalk1' },
+                { key: 'barbWalk2' },
+                { key: 'barbWalk3' },
+                { key: 'barbWalk4' },
+                { key: 'barbWalk5' },
+                { key: 'barbWalk6' },
+                { key: 'barbWalk7' },
+                { key: 'barbWalk8' },
+                { key: 'barbWalk9' },
+                { key: 'barbWalk10' },
+                { key: 'barbWalk11' },
+                { key: 'barbWalk12' },
+                { key: 'barbWalk13' },
+                { key: 'barbWalk14', duration: 50 }
+            ],
+            frameRate: 16,
+            repeat: -1
+        });
+
+        player = this.add.sprite(startingCoordinates[0] + 6, startingCoordinates[1] - 14, 'idle1').play('snooze');
+        player.setScale(0.11);
+        player.depth = 2;
+
+        enemy = this.physics.add.sprite(enemyStarCoor[0] - 2, enemyStarCoor[1] - 14, 'barbIdle1').play('barbSnooze');
+        enemy.setScale(0.3);
+        enemy.depth = 2;
+
+        enemy.coor = [enemyCoor[0], enemyCoor[1]];
+
+        enemyB = this.physics.add.sprite(enemyBStartCoor[0] - 2, enemyBStartCoor[1] - 14, 'barbIdle1').play('barbSnooze');
+        //enemyB.setTint(0xff0000);
+        enemyB.setScale(0.3);
+
+       // enemyB.anims.play('barbWalkLeft');
+
+        enemyC = this.physics.add.sprite(enemyCStartCoor[0] - 2, enemyCStartCoor[1] - 14, 'barbIdle1').play('barbSnooze');
+        enemyC.setTint(0xff0000);
+        enemyC.setScale(0.3);
+
+        //enemy.anims.play('barbWalkLeft');
+
+       // let enemyArray = [enemy, enemyB, enemyC];
+        let enemyArray = [enemy];
+
+        //cursors = this.input.keyboard.createCursorKeys();
+
+       // this.physics.add.collider(player, platforms);
 
 
 
@@ -461,15 +613,15 @@
                             function moveToNextHex(nextHex) {
 
 
-                                if (currentIndex < hexPath.length) {
+                              //  if (currentIndex < hexPath.length) {
 
                                     currentCoor = calculateCoordinates(hexPath[currentIndex]);
 
                                     playerTween = selfScene.tweens.add({
                                         targets: player,
-                                        x: currentCoor[0],
-                                        y: currentCoor[1] - 15,
-                                        duration: 200,
+                                        x: currentCoor[0] + 6,
+                                        y: currentCoor[1] - 14,
+                                        duration: 400,
                                         onComplete: function() {
 
                                             currentIndex++;
@@ -493,51 +645,170 @@
                                                 moveToNextHex(hexPath[currentIndex]);
 
                                             } else {
-                                                player.anims.stop();
+                                                player.anims.play('snooze');
                                                 tileIsSelected = false;
 
-                                                let adjacentHeroCoors = determineAdjacentHeroes(enemyCoor);
-
-                                                if (adjacentHeroCoors.length === 0) {
 
 
-                                                    //pick hex from six avaiable that is closest.
-                                                    //if theres a tie random select one
-                                                    //move to that hex if you can
-                                                    //other wise move to the closest available hex.  Break ties
-                                                    //with random
+                                                let continueLoop = true;
 
-                                                    let targetHex = pickHexAdjacentHerotoMoveTo(heroCoor, enemyCoor);
+                                                for (let i = 0; i < enemyArray.length; i++) {
 
-                                                    console.log("targetHex = ", targetHex);
+                                                    //let currentEnemyCoor = enemyArray[i].coor;
 
-                                                    let enemyRange = 4;
-                                                    let distanceToTarget = determineDepth(targetHex, enemyCoor);
+                                                    console.log("enemyArray[i].coor =  ", enemyArray[i].coor);
 
-                                                    console.log("Distance to target = ", distanceToTarget);
-
-                                                    if (enemyRange < distanceToTarget) {
-
-                                                    } else {  // target hex is within range of enemy move points
-
-                                                        let enemyAvailableMoves = generateAvailableMoves(enemyCoor, enemyRange);
-                                                        let enemyHexPath = determinePath(targetHex, enemyCoor);
-
-                                                        console.log("enemyHex Path = ", enemyHexPath);
-
-                                                    }
+                                                    let adjacentHeroCoors = determineAdjacentHeroes(enemyArray[i].coor);
 
 
-                                                } else { // there are nearby heroes
+
+                                                    if (adjacentHeroCoors.length === 0) {
+
+
+                                                        //pick hex from six avaiable that is closest.
+                                                        //if theres a tie random select one
+                                                        //move to that hex if you can
+                                                        //other wise move to the closest available hex.  Break ties
+                                                        //with random
+
+                                                        let targetHex = pickHexAdjacentHerotoMoveTo(heroCoor, enemyArray[i].coor);
+
+                                                        console.log("targetHex = ", targetHex);
+
+                                                        let enemyRange = 4;
+                                                        let distanceToTarget = determineDepth(targetHex, enemyArray[i].coor);
+
+                                                        console.log("Distance to target = ", distanceToTarget);
+
+                                                        if (enemyRange < distanceToTarget) {
+
+                                                            let enemyAvailableMoves = generateAvailableMoves(enemyArray[i].coor, enemyRange);
+
+                                                            //let closerTargerHex = pickHexClosestToTarget(enemyRange, targetHex);
+
+                                                            let currentClosest = 100;
+                                                            let choiceIndex;
+
+                                                            for (let i = 0; i < enemyAvailableMoves.length; i++) {
+
+                                                                let currentHexDistance = determineDepth(targetHex, enemyAvailableMoves[i]);
+                                                                if (currentHexDistance <= currentClosest) {
+                                                                    currentClosest = currentHexDistance;
+                                                                    choiceIndex = i;
+                                                                }
+                                                            }
+
+                                                            let closerTargetHex = enemyAvailableMoves[choiceIndex];
+
+                                                            //console.log("closerTargetHex = ", closerTargetHex);
+
+                                                            let enemyHexPath = determinePath(closerTargetHex, enemyArray[i].coor);
+
+                                                            enemyMoveToNextHex(enemy, enemyHexPath, enemyArray[i].coor);
+
+                                                            //console.log("enemeyHexPath at end = ", enemyHexPath)
+
+                                                            enemyArray[i].coor = enemyHexPath[enemyHexPath.length - 1];
+
+
+
+                                                        }   else {  // target hex is within range of enemy move points
+
+                                                            let enemyAvailableMoves = generateAvailableMoves(enemyArray[i].coor, enemyRange);
+                                                            let enemyHexPath = determinePath(targetHex, enemyArray[i].coor);
+
+                                                            console.log("enemyHex Path = ", enemyHexPath);
+
+                                                            enemyMoveToNextHex(enemy, enemyHexPath, enemyArray[i].coor);
+
+                                                            console.log("enemeyHexPath at end = ", enemyHexPath)
+
+                                                            enemyArray[i].coor = enemyHexPath[enemyHexPath.length - 1];
+
+
+
+                                                        }
+
+
+                                                    } else { // there are nearby heroes
 
                                                     enemyAttackHero(heroCoor, enemyCoor, enemy);
 
-                                                }
+                                                    }
+                                                }// for loop through enemyArray
                                             }
                                         }
                                     });
-                                }
+                               // }
                             }
+
+                            function enemyMoveToNextHex(enemySprite, path, pos) {
+
+                                let index = 0;
+
+                                console.log("path = ", path);
+
+                                let currentEnemyCoor = calculateCoordinates(path[0]);
+                                var enemyTween;
+                               // let currentIndex = 0;
+
+                                if (enemySprite.x > currentEnemyCoor[0]) {
+                                    enemySprite.anims.play('barbWalkLeft');
+                                } else {
+                                    enemySprite.anims.play('barbWalk');
+                                }
+
+                                subMoveToNextHex();
+
+                                function subMoveToNextHex() {
+
+                                    index++;
+
+                                    playerTween = selfScene.tweens.add({
+                                        targets: enemySprite,
+                                        x: currentEnemyCoor[0] - 2,
+                                        y: currentEnemyCoor[1] - 14,
+                                        duration: 400,
+                                        onComplete: function() {
+
+                                            console.log("Got over heeeeeereeeee");
+
+                                            if (index < path.length) {
+
+                                                console.log("path[index] = ", path[index]);
+
+                                                currentEnemyCoor = calculateCoordinates(path[index]);
+
+                                                if (enemySprite.x > currentEnemyCoor[0]) {
+                                                    enemySprite.anims.play('barbWalkLeft');
+                                                } else {
+                                                    enemySprite.anims.play('barbWalk');
+                                                }
+
+                                                subMoveToNextHex();
+
+                                            } else { // finished path
+
+                                                enemySprite.anims.play('barbSnooze');
+
+                                                grid[pos[1]][pos[0]] = 0;
+                                                let tempCoor = path[path.length - 1];
+                                                grid[tempCoor[1]][tempCoor[0]] = 2;
+
+                                            }
+                                        }
+                                    });
+
+                                }
+
+
+
+                            }
+
+                            // function pickHexClosestToTarget(range, targetHex) {
+
+
+                            // }
 
                             function enemyAttackHero(heroAtCoor, enemyAtCoor, enemySprite) {
 
@@ -555,39 +826,83 @@
 
                                 if (heroPos[1] % 2 === 0) {
 
-                                    hexUpLeft = [heroPos[0] - 1, heroPos[1] - 1];
-                                    hexLeft = [heroPos[0] - 1, heroPos[1]];
-                                    hexDownLeft = [heroPos[0] - 1, heroPos[1] + 1];
-                                    hexDownRight = [heroPos[0], heroPos[1] + 1];
-                                    hexRight = [heroPos[0] + 1, heroPos[1]];
-                                    hexUpRight = [heroPos[0], heroPos[1] - 1];
+                                    if (heroPos[0] - 1 >= 0 && heroPos[1] - 1 >= 0) {
+                                        hexUpLeft = [heroPos[0] - 1, heroPos[1] - 1];
+                                    }
+                                    if (heroPos[0] - 1 >= 0 ) {
+                                        hexLeft = [heroPos[0] - 1, heroPos[1]];
+                                    }
+                                    if (heroPos[0] - 1 >= 0 && heroPos[1] + 1 <= MAXHEIGHT) {
+                                        hexDownLeft = [heroPos[0] - 1, heroPos[1] + 1];
+                                    }
+                                    if (heroPos[1] + 1 <= MAXHEIGHT) {
+                                        hexDownRight = [heroPos[0], heroPos[1] + 1];
+                                    }
+                                    if (heroPos[0] + 1 <= MAXWIDTH) {
+                                        hexRight = [heroPos[0] + 1, heroPos[1]];
+                                    }
+                                    if (heroPos[1] - 1 >= 0) {
+                                        hexUpRight = [heroPos[0], heroPos[1] - 1];
+                                    }
 
                                 } else {
 
-                                    hexUpLeft = [heroPos[0], heroPos[1] - 1];
-                                    hexLeft = [heroPos[0] - 1, heroPos[1]];
-                                    hexDownLeft = [heroPos[0], heroPos[1] + 1];
-                                    hexDownRight = [heroPos[0] + 1, heroPos[1] + 1];
-                                    hexRight = [heroPos[0] + 1, heroPos[1]];
-                                    hexUpRight = [heroPos[0] + 1, heroPos[1] - 1];
+                                    if (heroPos[1] - 1 >= 0) {
+                                        hexUpLeft = [heroPos[0], heroPos[1] - 1];
+                                    }
+                                    if (heroPos[0] - 1 >= 0) {
+                                        hexLeft = [heroPos[0] - 1, heroPos[1]];
+                                    }
+                                    if (heroPos[1] + 1 <= MAXHEIGHT) {
+                                        hexDownLeft = [heroPos[0], heroPos[1] + 1];
+                                    }
+                                    if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] + 1 <= MAXHEIGHT) {
+                                        hexDownRight = [heroPos[0] + 1, heroPos[1] + 1];
+                                    }
+                                    if (heroPos[0] + 1 <= MAXWIDTH) {
+                                        hexRight = [heroPos[0] + 1, heroPos[1]];
+                                    }
+                                    if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] - 1 >= 0) {
+                                        hexUpRight = [heroPos[0] + 1, heroPos[1] - 1];
+                                    }
 
                                 }
 
-                                let distanceHexUpLeft = determineDepth(hexUpLeft, enemyPos);
-                                let distanceHexLeft = determineDepth(hexLeft, enemyPos);
-                                let distanceHexDownLeft = determineDepth(hexDownLeft, enemyPos);
-                                let distanceHexDownRight = determineDepth(hexDownRight, enemyPos);
-                                let distanceHexRight = determineDepth(hexRight, enemyPos);
-                                let distanceHexUpRight = determineDepth(hexUpRight, enemyPos);
+                                // let distanceHexUpLeft = determineDepth(hexUpLeft, enemyPos);
+                                // let distanceHexLeft = determineDepth(hexLeft, enemyPos);
+                                // let distanceHexDownLeft = determineDepth(hexDownLeft, enemyPos);
+                                // let distanceHexDownRight = determineDepth(hexDownRight, enemyPos);
+                                // let distanceHexRight = determineDepth(hexRight, enemyPos);
+                                // let distanceHexUpRight = determineDepth(hexUpRight, enemyPos);
 
-                                console.log("distance hex up left =", distanceHexUpLeft);
-                                console.log("distance hex left =", distanceHexLeft);
-                                console.log("distance hex down left =", distanceHexDownLeft);
-                                console.log("distance hex down right =", distanceHexDownRight);
-                                console.log("distance hex right =", distanceHexRight);
-                                console.log("distance hex up right =", distanceHexUpRight);
+                                console.log("distance hex up left =", determineDepth(hexUpLeft, enemyPos));
+                                console.log("distance hex left =", determineDepth(hexLeft, enemyPos));
+                                // console.log("distance hex down left =", distanceHexDownLeft);
+                                // console.log("distance hex down right =", distanceHexDownRight);
+                                // console.log("distance hex right =", distanceHexRight);
+                                // console.log("distance hex up right =", distanceHexUpRight);
 
-                                let arrayOfDistances = [hexUpLeft, hexLeft, hexDownLeft, hexDownRight, hexRight, hexUpRight];
+                                let arrayOfDistances = [];
+
+                                if (hexUpLeft) {
+                                    arrayOfDistances.push(hexUpLeft);
+                                }
+                                if (hexLeft) {
+                                    arrayOfDistances.push(hexLeft);
+                                }
+                                if (hexDownLeft) {
+                                    arrayOfDistances.push(hexDownLeft);
+                                }
+                                if (hexDownRight) {
+                                    arrayOfDistances.push(hexDownRight);
+                                }
+                                if (hexRight) {
+                                    arrayOfDistances.push(hexRight);
+                                }
+                                if (hexUpRight) {
+                                    arrayOfDistances.push(hexUpRight);
+                                }
+
 
 
                                 let shortestDistance = determineDepth(arrayOfDistances[0], enemyPos);
@@ -1044,65 +1359,8 @@
 
     function determineWhichHex(pointx, pointy) {
 
-        // let tempX = Math.floor(pointx / 30);
-        // let tempY = Math.floor(pointy / 30);
-        // console.log("tempX = ", tempX);
-        // console.log("tempY = ", tempY);
-
-        // let modX = pointx % 30;
-        // let modY = pointy % 30;
-
-        // console.log("modX = ", modX);
-        // console.log("modY = ", modY);
-
-        // if (modY > 22) {
-        //     if (modY - 22 > (modX - 15) * 2) {
-        //         console.log("Bingo!");
-        //     }
-        //     else {
-        //         console.log("Outside!");
-        //     }
-        // }
-
-        //var pos=game.input.activePointer.position;
-      // pos.x-=hexGrid.x;
-      // pos.y-=hexGrid.y;
-    // var xVal = Math.floor((pointx)/30);
-    // var yVal = Math.floor((pointy)/(28*3/4));
-    // var dX = (pointx)%30;
-    // var dY = (pointy)%(28*3/4);
-    // var slope = (28/4)/(30/2);
-    // var caldY=dX*slope;
-    // var delta=28/4-caldY;
-
-    // if(yVal%2===0){
-    //    //correction needs to happen in triangular portions & the offset rows
-    //    if(Math.abs(delta)>dY){
-    //        if(delta>0){//odd row bottom right half
-    //             xVal--;
-    //             yVal--;
-    //        }else{//odd row bottom left half
-    //             yVal--;
-    //        }
-    //    }
-    // }else{
-    //     if(dX>30/2){// available values don't work for even row bottom right half
-    //         if(dY<((28/2)-caldY)){//even row bottom right half
-    //             yVal--;
-    //         }
-    //     }else{
-    //        if(dY>caldY){//odd row top right & mid right halves
-    //            xVal--;
-    //        }else{//even row bottom left half
-    //            yVal--;
-    //        }
-    //     }
-    // }
-
-    // console.log("yVal = ", yVal, "xVal = ", xVal);
-
-          var hexagonWidth = 30;
-          var hexagonHeight = 28;
+          var hexagonWidth = 54;
+          var hexagonHeight = 58;
           var sectorWidth = hexagonWidth;
           var sectorHeight = hexagonHeight/4*3;
           var gradient = (hexagonHeight/4)/(hexagonWidth/2);
@@ -1208,14 +1466,14 @@
     function calculateCoordinates(hex) {
 
         let x;
-        let y = (hex[1] * 28 * 3/4) + 15;
+        let y = (hex[1] * 58 * 3/4) + 27;
 
         if (hex[1] % 2 === 0) {
-            x = (hex[0] * 30) + 15;
+            x = (hex[0] * 54) + 27;
         }
 
         else {
-            x = (hex[0] * 30) + 30;
+            x = (hex[0] * 54) + 54;
         }
 
         return [x, y];
