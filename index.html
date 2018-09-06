@@ -48,23 +48,30 @@
     let MAXHEIGHT = 28;
     let MAXWIDTH = 26;
     let selfScene;
+    let enemyArray;
+    let enemyIndex;
+    let awaitingEnemySelection = false;
+    let arrayOfNearbyEnemies;
+    let enemyDying = false;
+    let enemyBDying = false;
+    let enemyCDying = false;
 
 
-    var grid =     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    var grid =     [[3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                    [0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                    [0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                    [0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                    [0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                    [0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                    [0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -86,12 +93,12 @@
     //grid[22][3] = 1;
     //grid[21][12] = 2;
 
-    var heroCoor = [3, 3];
-    var enemyCoor = [10, 5];
+    var heroCoor = [1, 12];
+    var enemyCoor = [20, 1];
 
-    var enemyBCoor = [13, 5];
+    var enemyBCoor = [20, 2];
 
-    var enemyCCoor = [14, 6];
+    var enemyCCoor = [20, 3];
 
     //console.log(heroCoor[0]);
 
@@ -118,7 +125,7 @@
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('spark', 'assets/blue.png');
-        this.load.image('levelOne', 'assets/grid4.png');
+        this.load.image('levelOne', 'assets/grid5.png');
 
         this.load.image('idle1', 'assets/idle1.png');
         this.load.image('idle2', 'assets/idle2.png');
@@ -190,6 +197,52 @@
         this.load.image('barbWalk13', 'assets/barbWalk13.png');
         this.load.image('barbWalk14', 'assets/barbWalk14.png');
 
+        this.load.image('heroAttack1', 'assets/heroAttack1.png');
+        this.load.image('heroAttack2', 'assets/heroAttack2.png');
+        this.load.image('heroAttack3', 'assets/heroAttack3.png');
+        this.load.image('heroAttack4', 'assets/heroAttack4.png');
+        this.load.image('heroAttack5', 'assets/heroAttack5.png');
+        this.load.image('heroAttack6', 'assets/heroAttack6.png');
+        this.load.image('heroAttack7', 'assets/heroAttack7.png');
+        this.load.image('heroAttack8', 'assets/heroAttack8.png');
+        this.load.image('heroAttack9', 'assets/heroAttack9.png');
+        this.load.image('heroAttack10', 'assets/heroAttack10.png');
+
+        this.load.image('heroAttackLeft1', 'assets/heroAttackLeft1.png');
+        this.load.image('heroAttackLeft2', 'assets/heroAttackLeft2.png');
+        this.load.image('heroAttackLeft3', 'assets/heroAttackLeft3.png');
+        this.load.image('heroAttackLeft4', 'assets/heroAttackLeft4.png');
+        this.load.image('heroAttackLeft5', 'assets/heroAttackLeft5.png');
+        this.load.image('heroAttackLeft6', 'assets/heroAttackLeft6.png');
+        this.load.image('heroAttackLeft7', 'assets/heroAttackLeft7.png');
+        this.load.image('heroAttackLeft8', 'assets/heroAttackLeft8.png');
+        this.load.image('heroAttackLeft9', 'assets/heroAttackLeft9.png');
+        this.load.image('heroAttackLeft10', 'assets/heroAttackLeft10.png');
+
+        this.load.image('barbAttack1', 'assets/barbAttack1.png');
+        this.load.image('barbAttack2', 'assets/barbAttack2.png');
+        this.load.image('barbAttack3', 'assets/barbAttack3.png');
+        this.load.image('barbAttack4', 'assets/barbAttack4.png');
+        this.load.image('barbAttack5', 'assets/barbAttack5.png');
+        this.load.image('barbAttack6', 'assets/barbAttack6.png');
+        this.load.image('barbAttack7', 'assets/barbAttack7.png');
+        this.load.image('barbAttack8', 'assets/barbAttack8.png');
+
+        this.load.image('barbAttackLeft1', 'assets/barbAttackLeft1.png');
+        this.load.image('barbAttackLeft2', 'assets/barbAttackLeft2.png');
+        this.load.image('barbAttackLeft3', 'assets/barbAttackLeft3.png');
+        this.load.image('barbAttackLeft4', 'assets/barbAttackLeft4.png');
+        this.load.image('barbAttackLeft5', 'assets/barbAttackLeft5.png');
+        this.load.image('barbAttackLeft6', 'assets/barbAttackLeft6.png');
+        this.load.image('barbAttackLeft7', 'assets/barbAttackLeft7.png');
+        this.load.image('barbAttackLeft8', 'assets/barbAttackLeft8.png');
+
+        this.load.image('barbDead1', 'assets/dead1.png');
+        this.load.image('barbDead2', 'assets/dead2.png');
+        this.load.image('barbDead3', 'assets/dead3.png');
+        this.load.image('barbDead4', 'assets/dead4.png');
+        this.load.image('barbDead5', 'assets/dead5.png');
+        this.load.image('barbDead6', 'assets/dead6.png');
     }
 
     function create ()
@@ -363,7 +416,7 @@
             repeat: -1
         });
 
-         this.anims.create({
+        this.anims.create({
             key: 'barbWalk',
             frames: [
                 { key: 'barbWalk1' },
@@ -385,6 +438,95 @@
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'barbAttack',
+            frames: [
+                { key: 'barbAttack1' },
+                { key: 'barbAttack2' },
+                { key: 'barbAttack3' },
+                { key: 'barbAttack4' },
+                { key: 'barbAttack5' },
+                { key: 'barbAttack6' },
+                { key: 'barbAttack7' },
+                { key: 'barbAttack8', duration: 50 }
+            ],
+            frameRate: 16,
+            repeat: 0,
+            onComplete: attackComplete
+        });
+
+        this.anims.create({
+            key: 'barbAttackLeft',
+            frames: [
+                { key: 'barbAttackLeft1' },
+                { key: 'barbAttackLeft2' },
+                { key: 'barbAttackLeft3' },
+                { key: 'barbAttackLeft4' },
+                { key: 'barbAttackLeft5' },
+                { key: 'barbAttackLeft6' },
+                { key: 'barbAttackLeft7' },
+                { key: 'barbAttackLeft8', duration: 50 }
+            ],
+            frameRate: 16,
+            repeat: 0,
+            onComplete: attackComplete
+        });
+
+        this.anims.create({
+            key: 'heroAttack',
+            frames: [
+                { key: 'heroAttack1' },
+                { key: 'heroAttack2' },
+                { key: 'heroAttack3' },
+                { key: 'heroAttack4' },
+                { key: 'heroAttack5' },
+                { key: 'heroAttack6' },
+                { key: 'heroAttack7' },
+                { key: 'heroAttack8' },
+                { key: 'heroAttack9' },
+                { key: 'heroAttack10', duration: 50 }
+            ],
+            frameRate: 16,
+            repeat: 0,
+            onComplete: heroAttackComplete
+        });
+
+        this.anims.create({
+            key: 'heroAttackLeft',
+            frames: [
+                { key: 'heroAttackLeft1' },
+                { key: 'heroAttackLeft2' },
+                { key: 'heroAttackLeft3' },
+                { key: 'heroAttackLeft4' },
+                { key: 'heroAttackLeft5' },
+                { key: 'heroAttackLeft6' },
+                { key: 'heroAttackLeft7' },
+                { key: 'heroAttackLeft8' },
+                { key: 'heroAttackLeft9' },
+                { key: 'heroAttackLeft10', duration: 50 }
+            ],
+            frameRate: 16,
+            repeat: 0,
+            onComplete: heroAttackComplete
+        });
+
+        this.anims.create({
+            key: 'barbDead',
+            frames: [
+                { key: 'barbDead1' },
+                { key: 'barbDead2' },
+                { key: 'barbDead3' },
+                { key: 'barbDead4' },
+                { key: 'barbDead5' },
+                { key: 'barbDead6', duration: 50 }
+            ],
+            frameRate: 16,
+            repeat: 0,
+            onComplete: enemyFinishedDying
+        });
+
+
+
         player = this.add.sprite(startingCoordinates[0] + 6, startingCoordinates[1] - 14, 'idle1').play('snooze');
         player.setScale(0.11);
         player.depth = 2;
@@ -395,9 +537,21 @@
 
         enemy.coor = [enemyCoor[0], enemyCoor[1]];
 
+        enemy.attackingThisTurn = false;
+
+        enemy.hitPoints = 3;
+        enemy.isDead = false;
+
         enemyB = this.physics.add.sprite(enemyBStartCoor[0] - 2, enemyBStartCoor[1] - 14, 'barbIdle1').play('barbSnooze');
         //enemyB.setTint(0xff0000);
         enemyB.setScale(0.3);
+
+        enemyB.coor = [enemyBCoor[0], enemyBCoor[1]];
+
+        enemyB.attackingThisTurn = false;
+
+        enemyB.hitPoints = 3;
+        enemyB.isDead = false;
 
        // enemyB.anims.play('barbWalkLeft');
 
@@ -405,10 +559,17 @@
         enemyC.setTint(0xff0000);
         enemyC.setScale(0.3);
 
+        enemyC.coor = [enemyCCoor[0], enemyCCoor[1]];
+
+        enemyC.hitPoints = 3;
+
+        enemyC.attackingThisTurn = false;
+        enemyC.isDead = false;
         //enemy.anims.play('barbWalkLeft');
 
        // let enemyArray = [enemy, enemyB, enemyC];
-        let enemyArray = [enemy];
+        enemyArray = [enemy, enemyB, enemyC];
+        enemyIndex = 0;
 
         //cursors = this.input.keyboard.createCursorKeys();
 
@@ -426,7 +587,9 @@
 
                // console.log("@!@!@!!@!@!!@!@@!@@!!@!@@!");
 
-               // if (!playerMoving) {
+                if (!awaitingEnemySelection) {
+
+                    enemyIndex = 0;
 
                     if (tileIsSelected === false) {
 
@@ -644,284 +807,131 @@
 
                                                 moveToNextHex(hexPath[currentIndex]);
 
-                                            } else {
+                                            } else {  //moved to last hex in path
+
                                                 player.anims.play('snooze');
                                                 tileIsSelected = false;
 
+                                                let enemyIndex = 0;
 
+                                                arrayOfNearbyEnemies = determineAdjacentEnemies(heroCoor);
 
-                                                let continueLoop = true;
+                                                console.log("array of adj enemies = ", arrayOfNearbyEnemies);
 
-                                                for (let i = 0; i < enemyArray.length; i++) {
+                                                if (arrayOfNearbyEnemies.length === 0) {
 
-                                                    //let currentEnemyCoor = enemyArray[i].coor;
+                                                    doEnemyMoves();
 
-                                                    console.log("enemyArray[i].coor =  ", enemyArray[i].coor);
+                                                } else {  //There are adjacent enemies
 
-                                                    let adjacentHeroCoors = determineAdjacentHeroes(enemyArray[i].coor);
+                                                    awaitingEnemySelection = true;
 
+                                                }
 
+                                               // let continueLoop = true;
 
-                                                    if (adjacentHeroCoors.length === 0) {
+                                                // for (let i = 0; i < enemyArray.length; i++) {
 
+                                                //     //let currentEnemyCoor = enemyArray[i].coor;
 
-                                                        //pick hex from six avaiable that is closest.
-                                                        //if theres a tie random select one
-                                                        //move to that hex if you can
-                                                        //other wise move to the closest available hex.  Break ties
-                                                        //with random
+                                                //     console.log("enemyArray[i].coor =  ", enemyArray[i].coor);
 
-                                                        let targetHex = pickHexAdjacentHerotoMoveTo(heroCoor, enemyArray[i].coor);
-
-                                                        console.log("targetHex = ", targetHex);
-
-                                                        let enemyRange = 4;
-                                                        let distanceToTarget = determineDepth(targetHex, enemyArray[i].coor);
-
-                                                        console.log("Distance to target = ", distanceToTarget);
-
-                                                        if (enemyRange < distanceToTarget) {
-
-                                                            let enemyAvailableMoves = generateAvailableMoves(enemyArray[i].coor, enemyRange);
-
-                                                            //let closerTargerHex = pickHexClosestToTarget(enemyRange, targetHex);
-
-                                                            let currentClosest = 100;
-                                                            let choiceIndex;
-
-                                                            for (let i = 0; i < enemyAvailableMoves.length; i++) {
-
-                                                                let currentHexDistance = determineDepth(targetHex, enemyAvailableMoves[i]);
-                                                                if (currentHexDistance <= currentClosest) {
-                                                                    currentClosest = currentHexDistance;
-                                                                    choiceIndex = i;
-                                                                }
-                                                            }
-
-                                                            let closerTargetHex = enemyAvailableMoves[choiceIndex];
-
-                                                            //console.log("closerTargetHex = ", closerTargetHex);
-
-                                                            let enemyHexPath = determinePath(closerTargetHex, enemyArray[i].coor);
-
-                                                            enemyMoveToNextHex(enemy, enemyHexPath, enemyArray[i].coor);
-
-                                                            //console.log("enemeyHexPath at end = ", enemyHexPath)
-
-                                                            enemyArray[i].coor = enemyHexPath[enemyHexPath.length - 1];
+                                                //     let adjacentHeroCoors = determineAdjacentHeroes(enemyArray[i].coor);
 
 
 
-                                                        }   else {  // target hex is within range of enemy move points
-
-                                                            let enemyAvailableMoves = generateAvailableMoves(enemyArray[i].coor, enemyRange);
-                                                            let enemyHexPath = determinePath(targetHex, enemyArray[i].coor);
-
-                                                            console.log("enemyHex Path = ", enemyHexPath);
-
-                                                            enemyMoveToNextHex(enemy, enemyHexPath, enemyArray[i].coor);
-
-                                                            console.log("enemeyHexPath at end = ", enemyHexPath)
-
-                                                            enemyArray[i].coor = enemyHexPath[enemyHexPath.length - 1];
+                                                //     if (adjacentHeroCoors.length === 0) {
 
 
+                                                //         //pick hex from six avaiable that is closest.
+                                                //         //if theres a tie random select one
+                                                //         //move to that hex if you can
+                                                //         //other wise move to the closest available hex.  Break ties
+                                                //         //with random
 
-                                                        }
+                                                //         let targetHex = pickHexAdjacentHerotoMoveTo(heroCoor, enemyArray[i].coor);
+
+                                                //         console.log("targetHex = ", targetHex);
+
+                                                //         let enemyRange = 4;
+                                                //         let distanceToTarget = determineDepth(targetHex, enemyArray[i].coor);
+
+                                                //         console.log("Distance to target = ", distanceToTarget);
+
+                                                //         if (enemyRange < distanceToTarget) {
+
+                                                //             let enemyAvailableMoves = generateAvailableMoves(enemyArray[i].coor, enemyRange);
+
+                                                //             //let closerTargerHex = pickHexClosestToTarget(enemyRange, targetHex);
+
+                                                //             let currentClosest = 100;
+                                                //             let choiceIndex;
+
+                                                //             for (let i = 0; i < enemyAvailableMoves.length; i++) {
+
+                                                //                 let currentHexDistance = determineDepth(targetHex, enemyAvailableMoves[i]);
+                                                //                 if (currentHexDistance <= currentClosest) {
+                                                //                     currentClosest = currentHexDistance;
+                                                //                     choiceIndex = i;
+                                                //                 }
+                                                //             }
+
+                                                //             let closerTargetHex = enemyAvailableMoves[choiceIndex];
+
+                                                //             //console.log("closerTargetHex = ", closerTargetHex);
+
+                                                //             let enemyHexPath = determinePath(closerTargetHex, enemyArray[i].coor);
+
+                                                //             enemyMoveToNextHex(enemy, enemyHexPath, enemyArray[i].coor);
+
+                                                //             //console.log("enemeyHexPath at end = ", enemyHexPath)
+
+                                                //             enemyArray[i].coor = enemyHexPath[enemyHexPath.length - 1];
 
 
-                                                    } else { // there are nearby heroes
 
-                                                    enemyAttackHero(heroCoor, enemyCoor, enemy);
+                                                //         }   else {  // target hex is within range of enemy move points
 
-                                                    }
-                                                }// for loop through enemyArray
+                                                //             let enemyAvailableMoves = generateAvailableMoves(enemyArray[i].coor, enemyRange);
+                                                //             let enemyHexPath = determinePath(targetHex, enemyArray[i].coor);
+
+                                                //             console.log("enemyHex Path = ", enemyHexPath);
+
+                                                //             enemyMoveToNextHex(enemy, enemyHexPath, enemyArray[i].coor);
+
+                                                //             console.log("enemeyHexPath at end = ", enemyHexPath)
+
+                                                //             enemyArray[i].coor = enemyHexPath[enemyHexPath.length - 1];
+
+
+
+                                                //         }
+
+
+                                                //     } else { // there are nearby heroes
+
+                                                //     enemyAttackHero(heroCoor, enemyCoor, enemy);
+
+                                                //     }
+                                                // }// for loop through enemyArray
                                             }
                                         }
                                     });
                                // }
                             }
 
-                            function enemyMoveToNextHex(enemySprite, path, pos) {
-
-                                let index = 0;
-
-                                console.log("path = ", path);
-
-                                let currentEnemyCoor = calculateCoordinates(path[0]);
-                                var enemyTween;
-                               // let currentIndex = 0;
-
-                                if (enemySprite.x > currentEnemyCoor[0]) {
-                                    enemySprite.anims.play('barbWalkLeft');
-                                } else {
-                                    enemySprite.anims.play('barbWalk');
-                                }
-
-                                subMoveToNextHex();
-
-                                function subMoveToNextHex() {
-
-                                    index++;
-
-                                    playerTween = selfScene.tweens.add({
-                                        targets: enemySprite,
-                                        x: currentEnemyCoor[0] - 2,
-                                        y: currentEnemyCoor[1] - 14,
-                                        duration: 400,
-                                        onComplete: function() {
-
-                                            console.log("Got over heeeeeereeeee");
-
-                                            if (index < path.length) {
-
-                                                console.log("path[index] = ", path[index]);
-
-                                                currentEnemyCoor = calculateCoordinates(path[index]);
-
-                                                if (enemySprite.x > currentEnemyCoor[0]) {
-                                                    enemySprite.anims.play('barbWalkLeft');
-                                                } else {
-                                                    enemySprite.anims.play('barbWalk');
-                                                }
-
-                                                subMoveToNextHex();
-
-                                            } else { // finished path
-
-                                                enemySprite.anims.play('barbSnooze');
-
-                                                grid[pos[1]][pos[0]] = 0;
-                                                let tempCoor = path[path.length - 1];
-                                                grid[tempCoor[1]][tempCoor[0]] = 2;
-
-                                            }
-                                        }
-                                    });
-
-                                }
 
 
 
-                            }
 
                             // function pickHexClosestToTarget(range, targetHex) {
 
 
                             // }
 
-                            function enemyAttackHero(heroAtCoor, enemyAtCoor, enemySprite) {
-
-                                enemySprite.setVelocityX(180);
-                            }
-
-                            function pickHexAdjacentHerotoMoveTo(heroPos, enemyPos) {
-
-                                let hexUpLeft;
-                                let hexLeft;
-                                let hexDownLeft;
-                                let hexDownRight;
-                                let hexRight;
-                                let hexUpRight;
-
-                                if (heroPos[1] % 2 === 0) {
-
-                                    if (heroPos[0] - 1 >= 0 && heroPos[1] - 1 >= 0) {
-                                        hexUpLeft = [heroPos[0] - 1, heroPos[1] - 1];
-                                    }
-                                    if (heroPos[0] - 1 >= 0 ) {
-                                        hexLeft = [heroPos[0] - 1, heroPos[1]];
-                                    }
-                                    if (heroPos[0] - 1 >= 0 && heroPos[1] + 1 <= MAXHEIGHT) {
-                                        hexDownLeft = [heroPos[0] - 1, heroPos[1] + 1];
-                                    }
-                                    if (heroPos[1] + 1 <= MAXHEIGHT) {
-                                        hexDownRight = [heroPos[0], heroPos[1] + 1];
-                                    }
-                                    if (heroPos[0] + 1 <= MAXWIDTH) {
-                                        hexRight = [heroPos[0] + 1, heroPos[1]];
-                                    }
-                                    if (heroPos[1] - 1 >= 0) {
-                                        hexUpRight = [heroPos[0], heroPos[1] - 1];
-                                    }
-
-                                } else {
-
-                                    if (heroPos[1] - 1 >= 0) {
-                                        hexUpLeft = [heroPos[0], heroPos[1] - 1];
-                                    }
-                                    if (heroPos[0] - 1 >= 0) {
-                                        hexLeft = [heroPos[0] - 1, heroPos[1]];
-                                    }
-                                    if (heroPos[1] + 1 <= MAXHEIGHT) {
-                                        hexDownLeft = [heroPos[0], heroPos[1] + 1];
-                                    }
-                                    if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] + 1 <= MAXHEIGHT) {
-                                        hexDownRight = [heroPos[0] + 1, heroPos[1] + 1];
-                                    }
-                                    if (heroPos[0] + 1 <= MAXWIDTH) {
-                                        hexRight = [heroPos[0] + 1, heroPos[1]];
-                                    }
-                                    if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] - 1 >= 0) {
-                                        hexUpRight = [heroPos[0] + 1, heroPos[1] - 1];
-                                    }
-
-                                }
-
-                                // let distanceHexUpLeft = determineDepth(hexUpLeft, enemyPos);
-                                // let distanceHexLeft = determineDepth(hexLeft, enemyPos);
-                                // let distanceHexDownLeft = determineDepth(hexDownLeft, enemyPos);
-                                // let distanceHexDownRight = determineDepth(hexDownRight, enemyPos);
-                                // let distanceHexRight = determineDepth(hexRight, enemyPos);
-                                // let distanceHexUpRight = determineDepth(hexUpRight, enemyPos);
-
-                                console.log("distance hex up left =", determineDepth(hexUpLeft, enemyPos));
-                                console.log("distance hex left =", determineDepth(hexLeft, enemyPos));
-                                // console.log("distance hex down left =", distanceHexDownLeft);
-                                // console.log("distance hex down right =", distanceHexDownRight);
-                                // console.log("distance hex right =", distanceHexRight);
-                                // console.log("distance hex up right =", distanceHexUpRight);
-
-                                let arrayOfDistances = [];
-
-                                if (hexUpLeft) {
-                                    arrayOfDistances.push(hexUpLeft);
-                                }
-                                if (hexLeft) {
-                                    arrayOfDistances.push(hexLeft);
-                                }
-                                if (hexDownLeft) {
-                                    arrayOfDistances.push(hexDownLeft);
-                                }
-                                if (hexDownRight) {
-                                    arrayOfDistances.push(hexDownRight);
-                                }
-                                if (hexRight) {
-                                    arrayOfDistances.push(hexRight);
-                                }
-                                if (hexUpRight) {
-                                    arrayOfDistances.push(hexUpRight);
-                                }
 
 
 
-                                let shortestDistance = determineDepth(arrayOfDistances[0], enemyPos);
-                                let closestIndex = 0;
-
-                                for (let i = 0; i < arrayOfDistances.length; i++) {
-
-                                    if (determineDepth(arrayOfDistances[i], enemyPos) < shortestDistance) {
-                                        shortestDistance = determineDepth(arrayOfDistances[i], enemyPos);
-                                        closestIndex = i;
-                                    }
-                                }
-
-                                console.log("shortestDistance = ", shortestDistance);
-                                console.log("hex = ", arrayOfDistances[closestIndex]);
-
-                                return arrayOfDistances[closestIndex];
-
-                            }
 
 
                             // for (let i = 0; i < hexPath.length; i++) {
@@ -999,9 +1009,40 @@
                           //           }
                           //      }
                           //  });
+                        } else {
+                            arrayOfNearbyEnemies = determineAdjacentEnemies(heroCoor);
+                            if (arrayIncludesCoordinates(arrayOfNearbyEnemies, hexClicked)) {
+                                starGroup.getChildren().forEach(function(elm) {
+                                    if (elm.active) {
+                                        elm.destroy();
+                                    }
+                                    //elm.clear(false, true);
+                                });
+
+                                starGroup.clear();
+
+                                tileIsSelected = false;
+
+                                heroAttackEnemy(hexClicked);
+                            }
                         }
                     }
-               // }
+
+                } else {   //here we are waiting for player to click on an adjacent enemy
+
+                    if (arrayIncludesCoordinates(arrayOfNearbyEnemies, hexClicked)) {
+
+                        //console.log("!!!!!!!");
+                        heroAttackEnemy(hexClicked);
+
+
+                    } else {
+
+
+                        //console.log("OHOHOHOHO");
+                    }
+
+                }
             }
 
             // console.log("AAA", playerSelected[0]);
@@ -1048,302 +1089,62 @@
 
     }
 
-    function update ()
-    {
-
-        //this.cameras.main.scrollX = 50;
-
-        // if (playerMoving) {
-
-        //     let coordinates = calculateCoordinates(destination);
-
-        //     if (movingRight) {
-
-
-
-        //         if (player.x >= coordinates[0] - 4) {
-        //             player.setVelocityX(0);
-        //             movingRight = false;
-        //            // player.anims.play('turn')
-        //         }
-
-        //     }
-
-        //     if (movingUp) {
-
-        //         if (player.y <= coordinates[1] - 10) {
-        //             player.setVelocityY(0);
-        //             movingUp = false;
-        //         }
-        //     }
-
-        //     if (movingLeft) {
-
-        //         if (player.x <= coordinates[0] + 4) {
-
-        //             player.setVelocityX(0);
-        //             movingLeft = false;
-        //         }
-        //     }
-
-        //     if (movingDown) {
-
-        //         if (player.y >= coordinates[1] - 20) {
-
-        //             player.setVelocityY(0);
-        //             movingDown = false;
-        //         }
-        //     }
-
-        //     if (!movingUp && !movingRight && !movingLeft && !movingDown) {
-
-        //         //timedEvent = this.time.delayedCall(1000);
-
-        //         player.anims.stop();
-
-        //        // player.x = coordinates[0];
-        //        // player.y = coordinates[1] - 15;
-        //         playerMoving = false;
-
-        //      //   playersTurn = false;
-
-        //         //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
-
-        //         testCoor = coordinates;
-
-
-        //         timedEvent = this.time.delayedCall(20, adjustUnitPos, [], this);
-
-                //let heroesInRange = [];
-
-               // heroesInRange =
-
-            //     let heroesInRange = determineHeroesInRange(enemyCoor, 10);
-
-             //    console.log("heroes in range = ", heroesInRange);
-
-               // if (heroesInRange.length >= 1) {
-
-                    //randomly (?) determine which hero to attack.  Now that I think about it,
-                    // maybe should attack the weakest hero in ragne or something.
-                    // for now just use [0]
-
-                 //   enemyRangedAttack(heroesInRange[0], enemyCoor)
-
-                        // bullet.setActive(true);
-                        // bullet.setVisible(true);
-                        // bullet.x = enemyPos[0] - 5;
-                        // bullet.y = enemyPos[1] - 5;
-
-                        // bullet.setVelocityX(-200);
-               // }
-
-               // console.log("heroes in Range array: ", heroesInRange);
-
-                //console.log("Coordinates[0] = ", coordinates[0], "Player.x = ", player.x);
-
-             //   console.log("Player.x = ", player.x, "Player.y = ", player.y);
-       //     }
-
-    //    }
-
-        // if (enemyBulletMoving) {
-
-        //     let movingToCoor = calculateCoordinates(enemyBulletMovingTo);
-
-        //     if (enemyBulletMovingUp) {
-
-        //         if (bullet.y <= movingToCoor[1]) {
-        //             enemyBulletMovingUp = false;
-        //             bullet.setVelocityY(0);
-        //         }
-        //     }
-
-        //     if (enemyBulletMovingDown) {
-        //         if (bullet.y >= movingToCoor[1] - 10) {
-        //             enemyBulletMovingDown = false;
-        //             bullet.setVelocityY(0);
-        //         }
-        //     }
-
-        //     if (enemyBulletMovingRight) {
-
-        //         if (bullet.x >= movingToCoor[0] - 5) {
-        //             enemyBulletMovingRight = false;
-        //             bullet.setVelocityX(0);
-
-        //         }
-        //     }
-
-        //     if (enemyBulletMovingLeft) {
-        //         if (bullet.x <= movingToCoor[0]) {
-        //             enemyBulletMovingLeft = false;
-        //             bullet.setVelocityX(0);
-        //         }
-        //     }
-
-        //     if (!enemyBulletMovingUp && !enemyBulletMovingDown && !enemyBulletMovingRight && !enemyBulletMovingLeft) {
-        //         enemyBulletMoving = false;
-        //         bullet.setActive(false);
-        //         bullet.setVisible(false);
-        //     }
-
-            // console.log("up = ", enemyBulletMovingUp);
-            //     console.log("down = ", enemyBulletMovingDown);
-            //     console.log("right = ", enemyBulletMovingRight);
-            //     console.log("left = ", enemyBulletMovingLeft);
-
-
-
-
-      //  }
-        // // if (  cursors.left.isDown)
-        // // {
-        // //     player.setVelocityX(-160);
-
-        // //     player.anims.play('left', true);
-        // // }
-        // // else if (cursors.right.isDown)
-        // // {
-        //     player.setVelocityX(160);
-
-        //     player.anims.play('right', true);
-        // }
-        // else
-        // {
-        //    // player.setVelocityX(0);
-
-        //    // player.anims.play('turn');
-        // }
-
-        // if (cursors.up.isDown)
-        // {
-        //     player.setVelocityY(-160);
-        // }
-        // else
-        // {
-        //     //player.setVelocityY(0);
-        // }
-
-        // if (cursors.down.isDown)
-        // {
-        //     player.setVelocityY(160);
-        //     //console.log("Hello");
-        // }
-
-        // if (!cursors.down.isDown && !cursors.up.isDown)
-        // {
-        //     //player.setVelocityY(0);
-        // // }
-
-        // if (playerSelected[0] !== null) {
-
-        //     if (movingRight === true)
-        //     {
-
-        //         console.log(playerSelected[0]);
-
-        //         playerSelected[0].setVelocityX(160);
-        //         //playerSelected[0].anims.play('right', true);
-
-        //         //console.log("mright");
-        //         //playerMoving = false;
-
-        //         if (playerSelected[0].x >= movingTo[0]) {
-        //             movingRight = false;
-        //             console.log("x coordinates equal");
-        //            // playerSelected[0].anims.play('turn');
-        //             if (playerSelected[0]) playerSelected[0].setVelocityX(0);
-        //           //  playerSelected[0] = false;
-
-
-        //             if (playerSelected[2] > movingTo[1]) {
-        //                 movingUp = true;
-        //             }
-
-        //             else if (playerSelected[2] < movingTo[1]) {
-        //                 movingDown = true;
-        //             }
-
-        //             else {
-        //                 playerSelected[0] = null;
-        //             }
-        //         }
-        //     }
-
-        //     if (movingUp === true)
-        //     {
-
-        //         playerSelected[0].setVelocityY(-160);
-
-        //         if (playerSelected[0].y <= movingTo[1]) {
-        //             movingUp = false;
-        //             console.log("Y coordinates are equal");
-        //           //  player.anims.play('turn');
-        //             if (playerSelected[0]) playerSelected[0].setVelocityY(0);
-        //             playerSelected[0] = null;
-        //         }
-        //     }
-
-        //     if (movingLeft === true)
-        //     {
-
-        //         //playerSelected[0] = player;
-        //         if (playerSelected[0]) playerSelected[0].setVelocityX(-160);
-        //        // player.anims.play('left', true);
-
-        //         if (playerSelected[0].x <= movingTo[0]) {
-
-        //             movingLeft = false;
-        //             if (playerSelected[0]) playerSelected[0].setVelocityX(0);
-        //           //  playerSelected[0] = {};
-
-        //             if (playerSelected[2] > movingTo[1]) {
-        //                 movingUp = true;
-        //             }
-
-        //             else if (playerSelected[2] < movingTo[1]) {
-        //                 movingDown = true;
-        //             }
-
-        //             else {
-        //                 playerSelected[0] = null;
-        //             }
-
-
-        //         }
-        //         //playerMoving = false;
-        //        // console.log("mleft");
-        //     }
-
-        //     if (movingDown === true)
-        //     {
-
-
-        //         playerSelected[0].setVelocityY(160);
-        //         // player.anims.play('turn');
-        //         // playerMoving = false;
-        //         if (playerSelected[0].y >= movingTo[1]) {
-        //             movingDown = false;
-        //             console.log("Y coordinates are equal");
-        //           //  player.anims.play('turn');
-
-        //             playerSelected[0].setVelocityY(0);
-
-        //             playerSelected[0] = null;
-
-        //         }
-        //     }
-
-            // if (this.input.on('pointerdown')) {
-            //     console.log("Spoon");
-            // }
-
-            //console.log("player.x = ", player.x);
-
-            //console.log("moving down is", movingDown);
-
-     //  }
+    function update ()  {
+    }
+
+    function heroAttackEnemy(enemyHex) {
+
+        let enemySprite;
+
+       // console.log("enemy.coor = ", enemy.coor, "enemyHex = ", enemyHex);
+
+        if (arrayIncludesCoordinates([enemy.coor], enemyHex)) {
+            enemySprite = enemy;
+            enemy.hitPoints--;
+            if (enemy.hitPoints === 0 && enemyDying === false) {
+                enemyDying = true;
+            }
+        }
+        if (arrayIncludesCoordinates([enemyB.coor], enemyHex)) {
+            enemyB.hitPoints--;
+            if (enemyB.hitPoints === 0 && enemyBDying === false) {
+                enemyBDying = true;
+            }
+            enemySprite = enemyB;
+        }
+        if (arrayIncludesCoordinates([enemyC.coor], enemyHex)) {
+            enemyC.hitPoints--;
+            if (enemyC.hitPoints === 0 && enemyCDying === false) {
+                enemyCDying = true;
+            }
+            enemySprite = enemyC;
+        }
+
+        //enemySprite.hitPoints--;
+
+        if (player.x > enemySprite.x) {
+            player.anims.play('heroAttackLeft');
+        } else {
+            player.anims.play('heroAttack');
+        }
+
+        //console.log("enemy Sprite.coor = ", enemySprite.coor);
+
+
+    }
+
+    function heroAttackComplete(sprite) {
+        sprite.anims.play('snooze');
+        awaitingEnemySelection = false;
+        doEnemyMoves();
+    }
+
+    function attackComplete(sprite) {
+        //console.log("boom shaka laka");
+        sprite.anims.play('barbSnooze');
+        enemyIndex++;
+        sprite.attackingThisTurn = false;
+        doEnemyMoves();
     }
 
     function clickFunc(player)
@@ -1480,269 +1281,6 @@
 
     }
 
-    // function generateAvailableMoves(position, movePoints) {
-    //     let output = [];
-    //     let visited = [];
-    //     getMoves(position, movePoints);
-    //     function getMoves(position, movePoints) {
-    //         //console.log("getMoves called");
-    //         if (movePoints === 0) return;
-    //         //if (position[1] > grid[0].length) return;
-    //         //if (position[0] > grid.length) return;
-    //           // We must check wether it is an odd or even row before we calculate moving in
-    //           // various directions because of the way hex grid numbering lines up with
-    //           // an array of arrays.  (IE moving up and to the left is a different calculation
-    //           // if you start in an odd or even row.  )
-    //         if (position[1] === 0 || position[1] % 2 === 0) {
-    //         //Up and to the left... even rows  (odd-r horizontal lay-out)
-    //             if (position[0] - 1 >= 0 && position[1] - 1 >= 0) {
-    //                 if (grid[position[1] - 1][position[0] - 1] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1] - 1])) {
-    //                         output.push([position[0] - 1, position[1] - 1]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1] - 1])) {
-
-    //                         getMoves([position[0] - 1, position[1] - 1], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1] - 1]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[1] - 1][position[0] - 1] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1] - 1])) {
-
-    //                         getMoves([position[0] - 1, position[1] - 1], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1] - 1]);
-    //                     }
-    //                 }
-    //             }
-    //             //Up and to the right, even row
-    //             if (position[1] - 1 >= 0) {
-    //                 if (grid[position[1] - 1][position[0]] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0], position[1] - 1])) {
-    //                         output.push([position[0], position[1] - 1]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0], position[1] - 1])) {
-
-    //                         getMoves([position[0], position[1] - 1], movePoints - 1);
-    //                         visited.push([position[0], position[1] - 1]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[1] - 1][position[0]] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0], position[1] - 1])) {
-
-    //                         getMoves([position[0], position[1] - 1], movePoints - 1);
-    //                         visited.push([position[0], position[1] - 1]);
-    //                     }
-    //                 }
-    //             }
-    //               //Left, even row
-    //             if (position[0] - 1 >= 0) {
-    //                 if (grid[position[1]][position[0] - 1] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1]])) {
-    //                         output.push([position[0] - 1, position[1]]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1]])) {
-
-    //                         getMoves([position[0] - 1, position[1]], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1]]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[1]][position[0] - 1] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1]])) {
-
-    //                         getMoves([position[0] - 1, position[1]], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1]]);
-    //                     }
-    //                 }
-    //             }
-    //               //Down and to the left, even row
-    //             // console.log("movepoints = ", movePoints, "position=", position[0] - 1, position[1] + 1);
-    //             // console.log("grid shit = ", grid[position[0] - 1][position[1] + 1]);
-    //             // console.log("blah", grid[27][0]);
-    //             if (position[0] - 1 >= 0 && position[1] + 1 <= grid.length - 1) {
-    //                 if (grid[position[1] + 1][position[0] - 1] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1] + 1])) {
-    //                         output.push([position[0] - 1, position[1] + 1]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1] + 1])) {
-
-    //                         getMoves([position[0] - 1, position[1] + 1], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1] + 1]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[0] - 1][position[1] + 1] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1] + 1])) {
-
-    //                         getMoves([position[0] - 1, position[1] + 1], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1] + 1]);
-    //                     }
-    //                 }
-    //             }
-    //               //Down and to the right, even row
-    //             if (position[1] + 1 <= grid.length - 1) {
-    //                 if (grid[position[1] + 1][position[0]] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0], position[1] + 1])) {
-    //                         output.push([position[0], position[1] + 1]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0], position[1] + 1])) {
-
-    //                         getMoves([position[0], position[1] + 1], movePoints - 1);
-    //                         visited.push([position[0], position[1] + 1]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[1] + 1][position[0]] === 0) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0], position[1] + 1])) {
-
-    //                         getMoves([position[0], position[1] + 1], movePoints - 1);
-    //                          visited.push([position[0], position[1] + 1]);
-    //                     }
-    //                 }
-    //             }
-    //               //Right, even row
-    //             if (position[0] + 1 <= grid[0].length - 1) {
-    //                 if (grid[position[1]][position[0] + 1] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1]])) {
-    //                         output.push([position[0] + 1, position[1]]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1]])) {
-
-    //                         getMoves([position[0] + 1, position[1]], movePoints - 1);
-    //                         visited.push([position[0] + 1, position[1]]);
-    //                     }
-
-    //                 }
-    //                 else if (grid[position[1]][position[0] + 1] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1]])) {
-
-    //                         getMoves([position[0] + 1, position[1]], movePoints - 1);
-    //                         visited.push([position[0] + 1, position[1]]);
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //           // even rows logic starts here
-    //         else {
-    //               //Up and to the Left, odd row
-    //             if (position[1] - 1 >= 0) {
-    //                 if (grid[position[1] - 1][position[0]] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0], position[1] - 1])) {
-    //                         output.push([position[0], position[1] - 1]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0], position[1] - 1])) {
-
-    //                         getMoves([position[0], position[1] - 1], movePoints - 1);
-    //                         visited.push([position[0], position[1] - 1]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[1] - 1][position[0]] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0], position[1] - 1])) {
-
-    //                         getMoves([position[0], position[1] - 1], movePoints - 1);
-    //                         visited.push([position[0], position[1] - 1]);
-    //                     }
-    //                 }
-    //             }
-    //             //Up and to the right, odd row
-    //             if (position[1] - 1 >= 0) {
-    //                 if (grid[position[1] - 1][position[0] + 1] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1] - 1])) {
-    //                         output.push([position[0] + 1, position[1] - 1]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1] - 1])) {
-
-    //                         getMoves([position[0] + 1, position[1] - 1], movePoints - 1);
-    //                          visited.push([position[0] + 1, position[1] - 1]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[1] - 1][position[0] + 1] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1] - 1])) {
-
-    //                         getMoves([position[0] + 1, position[1] - 1], movePoints - 1);
-    //                         visited.push([position[0] + 1, position[1] - 1]);
-    //                     }
-    //                 }
-    //             }
-    //                //Left, odd row
-    //             if (position[0] - 1 >= 0) {
-    //                 if (grid[position[1]][position[0] - 1] === 0) {
-    //                     if (!arrayIncludesCoordinates(output, [position[0] - 1, position[1]])) {
-    //                         output.push([position[0] - 1, position[1]]);
-    //                     }
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1]])) {
-
-    //                         getMoves([position[0] - 1, position[1]], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1]]);
-    //                     }
-    //                 }
-    //                 else if (grid[position[1]][position[0] - 1] === 1) {
-    //                     if (!arrayIncludesCoordinates(visited, [position[0] - 1, position[1]])) {
-
-    //                         getMoves([position[0] - 1, position[1]], movePoints - 1);
-    //                         visited.push([position[0] - 1, position[1]]);
-    //                     }
-    //                 }
-    //             }
-    //             //console.log("movepoints = ", movePoints, "position =", position[0], position[1] + 1);
-    //             //console.log("grid shit = ", grid[position[0]][position[1] + 1]);
-    //               //Down and to the left, odd row
-    //             if (grid[position[1] + 1][position[0]] === 0) {
-    //                 if (!arrayIncludesCoordinates(output, [position[0], position[1] + 1])) {
-    //                     output.push([position[0], position[1] + 1]);
-    //                 }
-    //                 if (!arrayIncludesCoordinates(visited, [position[0], position[1] + 1])) {
-
-    //                     getMoves([position[0], position[1] + 1], movePoints - 1);
-    //                     visited.push([position[0], position[1] + 1]);
-    //                 }
-    //             }
-    //             else if (grid[position[1] + 1][position[0]] === 1) {
-    //                 if (!arrayIncludesCoordinates(visited, [position[0], position[1] + 1])) {
-
-    //                     getMoves([position[0], position[1] + 1], movePoints - 1);
-    //                     visited.push([position[0], position[1] + 1]);
-    //                 }
-    //             }
-    //               //Down and to the right, odd row
-    //             if (grid[position[1] + 1][position[0] + 1] === 0) {
-    //                 if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1] + 1])) {
-    //                     output.push([position[0] + 1, position[1] + 1]);
-    //                 }
-    //                 if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1] + 1])) {
-
-    //                     getMoves([position[0] + 1, position[1] + 1], movePoints - 1);
-    //                     visited.push([position[0] + 1, position[1] + 1]);
-    //                 }
-
-    //             }
-    //             else if (grid[position[1] + 1][position[0] + 1] === 1) {
-    //                 if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1] + 1])) {
-
-    //                     getMoves([position[0] + 1, position[1] + 1], movePoints - 1);
-    //                     visited.push([position[0] + 1, position[1] + 1]);
-    //                 }
-    //             }
-    //               //Right, odd row
-    //             if (grid[position[1]][position[0] + 1] === 0) {
-    //                 if (!arrayIncludesCoordinates(output, [position[0] + 1, position[1]])) {
-    //                     output.push([position[0] + 1, position[1]]);
-    //                 }
-    //                 if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1]])) {
-
-    //                     getMoves([position[0] + 1, position[1]], movePoints - 1);
-    //                     visited.push([position[0] + 1, position[1]]);
-    //                 }
-    //             }
-    //             else if (grid[position[1]][position[0] + 1] === 0) {
-    //                 if (!arrayIncludesCoordinates(visited, [position[0] + 1, position[1]])) {
-
-    //                     getMoves([position[0] + 1, position[1]], movePoints - 1);
-    //                     visited.push([position[0] + 1, position[1]]);
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return output;
-    // }
-
     function arrayIncludesCoordinates(array, coordinates) {
 
         output = false;
@@ -1757,108 +1295,6 @@
 
         return output;
     }
-
-    // function generateHeroesInRange(enemyPos, range) {
-
-    //     //breadth first search
-
-    //     let output = [];
-
-    //     let posUpLeft = enemyPos;
-    //     let posLeft = enemyPos;
-    //     let posDownLeft = enemyPos;
-    //     let posDownRight = enemyPos;
-    //     let posRight = enemyPos;
-    //     let posUpRight = enemyPos;
-
-    //     for (let i = 0; i < range; i++) {
-
-    //         //if (enemyPos[0] % 2 === 0) {
-
-    //             // if (grid[enemyPos[1] - i][enemyPos[0] - i] === 1) {
-
-    //             //     output.push([enemyPos[0] - i, enemyPos[1] - i]);
-
-    //             // }
-
-    //             if (posUpLeft[0] % 2 === 0) {
-    //                 posUpLeft = [posUpLeft[0] - 1, posUpLeft[1] - 1];
-    //             } else {
-    //                 posUpLeft = [posUpLeft[0], posUpLeft[1] - 1];
-    //             }
-
-    //             if (posLeft[0] % 2 === 0) {
-    //                 posLeft = [posLeft[0] - 1, posLeft[1]];
-    //             } else {
-    //                 posLeft = [posLeft[0] - 1, posLeft[1]];
-    //             }
-
-    //             if (posDownLeft[0] % 2 === 0) {
-    //                 posDownLeft = [posDownLeft[0] - 1, posDownLeft[1] + 1];
-    //             } else {
-    //                 posDownLeft = [posDownLeft[0], posDownLeft[1] + 1];
-    //             }
-
-    //             if (posDownRight[0] % 2 === 0) {
-    //                 posDownRight = [posDownRight[0], posDownRight[1] + 1];
-    //             } else {
-    //                 posDownRight = [posDownRight[0] + 1, posDownRight[1] + 1];
-    //             }
-
-    //             if (posRight[0] % 2 === 0) {
-    //                 posRight = [posRight[0] + 1, posRight[1]];
-    //             } else {
-    //                 posRight = [posRight[0] + 1, posRight[1]];
-    //             }
-
-    //             if (posUpRight[0] % 2 === 0) {
-    //                 posUpRight = [posUpRight[0], posUpRight[1] - 1];
-    //             } else {
-    //                 posUpRight = [posUpRight[0] + 1, posUpRight[1] - 1];
-    //             }
-
-    //             if (grid[posUpLeft[1]][posUpLeft[0]] === 1) {
-    //                 if (!arrayIncludesCoordinates(output, [posUpLeft[0], posUpLeft[1]])) {
-    //                     output.push([posUpLeft[0], posUpLeft[1]]);
-    //                 }
-    //             }
-
-    //             if (grid[posLeft[1]][posLeft[0]] === 1) {
-    //                 if (!arrayIncludesCoordinates(output, [posLeft[0], posLeft[1]])) {
-    //                     output.push([posLeft[0], posLeft[1]]);
-    //                 }
-    //             }
-
-    //             if (grid[posDownLeft[1]][posDownLeft[0]] === 1) {
-    //                 if (!arrayIncludesCoordinates(output, [posDownLeft[0], posDownLeft[1]])) {
-    //                     output.push([posDownLeft[0], posDownLeft[1]]);
-    //                 }
-    //             }
-
-    //             if (grid[posDownRight[1]][posDownRight[0]] === 1) {
-    //                 if (!arrayIncludesCoordinates(output, [posDownRight[0], posDownRight[1]])) {
-    //                     output.push([posDownRight[0], posDownRight[1]]);
-    //                 }
-    //             }
-
-    //             if (grid[posRight[1]][posRight[0]] === 1) {
-    //                 if (!arrayIncludesCoordinates(output, [posRight[0], posRight[1]])) {
-    //                     output.push([posRight[0], posRight[1]]);
-    //                 }
-    //             }
-
-    //             if (grid[posUpRight[1]][posUpRight[0]] === 1) {
-    //                 if (!arrayIncludesCoordinates(output, [posUpRight[0], posUpRight[1]])) {
-    //                     output.push([posUpRight[0], posUpRight[1]]);
-    //                 }
-    //             }
-
-
-    //     }
-
-    //     return output;
-
-    // }
 
     function determineHeroesInRange(pos, range) {
 
@@ -3079,6 +2515,408 @@
         }
 
         enemyBulletMovingTo = heroPos;
+    }
+
+    // function anEnemyHasDied() {
+
+    //     let output = [];
+
+    //     let enemySprite;
+
+
+
+    // }
+
+    function enemyDies(enemySprite) {
+
+        enemySprite.anims.play('barbDead');
+        console.log("got to this part");
+        enemySprite.isDead = true;
+
+    }
+
+    function enemyFinishedDying(sprite) {
+        doEnemyMoves();
+    }
+
+    function doEnemyMoves() {
+
+        if (enemyDying && !enemy.isDead) {
+
+            enemyDies(enemy);
+            return;
+
+        }
+
+        if (enemyBDying && !enemyB.isDead) {
+
+            enemyDies(enemyB);
+            return;
+        }
+
+        if (enemyCDying && !enemyC.isDead) {
+
+            enemyDies(enemyC);
+            return;
+        }
+
+
+                              //  for (let i = 0; i < enemyArray.length; i++) {
+        if (enemyIndex > enemyArray.length - 1) {
+            return;
+        }
+
+        if (!enemyArray[enemyIndex].isDead) {
+
+            console.log("enemyArray[enemyIndex].coor =  ", enemyArray[enemyIndex].coor);
+            let adjacentHeroCoors = determineAdjacentHeroes(enemyArray[enemyIndex].coor);
+            if (adjacentHeroCoors.length === 0) {
+
+                let targetHex = pickHexAdjacentHerotoMoveTo(heroCoor, enemyArray[enemyIndex].coor);
+
+                if (targetHex.length > 0) {
+
+                    console.log("targetHex = ", targetHex);
+
+                    let enemyRange = 4;
+                    let distanceToTarget = determineDepth(targetHex, enemyArray[enemyIndex].coor);
+
+                    console.log("Distance to target = ", distanceToTarget);
+
+                    if (enemyRange < distanceToTarget) {
+
+                        let enemyAvailableMoves = generateAvailableMoves(enemyArray[enemyIndex].coor, enemyRange);
+
+                                                                //let closerTargerHex = pickHexClosestToTarget(enemyRange, targetHex);
+
+                        let currentClosest = 100;
+                        let choiceIndex;
+
+                        for (let i = 0; i < enemyAvailableMoves.length; i++) {
+
+                            let currentHexDistance = determineDepth(targetHex, enemyAvailableMoves[i]);
+                            if (currentHexDistance <= currentClosest) {
+                                currentClosest = currentHexDistance;
+                                choiceIndex = i;
+                            }
+                        }
+
+                        let closerTargetHex = enemyAvailableMoves[choiceIndex];
+
+                        //console.log("closerTargetHex = ", closerTargetHex);
+
+                        let enemyHexPath = determinePath(closerTargetHex, enemyArray[enemyIndex].coor);
+
+                        enemyMoveToNextHex(enemyArray[enemyIndex], enemyHexPath, enemyArray[enemyIndex].coor);
+
+                        //console.log("enemeyHexPath at end = ", enemyHexPath)
+
+                        enemyArray[enemyIndex].coor = enemyHexPath[enemyHexPath.length - 1];
+
+
+
+                    }  else {  // target hex is within range of enemy move points
+
+                        let enemyAvailableMoves = generateAvailableMoves(enemyArray[enemyIndex].coor, enemyRange);
+                        let enemyHexPath = determinePath(targetHex, enemyArray[enemyIndex].coor);
+
+                        console.log("enemyHex Path = ", enemyHexPath);
+
+                        enemyArray[enemyIndex].attackingThisTurn = true;
+
+                        enemyMoveToNextHex(enemyArray[enemyIndex], enemyHexPath, enemyArray[enemyIndex].coor);
+
+                        console.log("enemeyHexPath at end = ", enemyHexPath)
+                        enemyArray[enemyIndex].coor = enemyHexPath[enemyHexPath.length - 1];
+                    }
+                }
+
+
+            } else { // there are nearby heroes
+
+            enemyAttackHero(heroCoor, enemyArray[enemyIndex].coor, enemyArray[enemyIndex]);
+
+            }
+
+        } else {//enemy is dead
+            enemyIndex++;
+            console.log("peppermint");
+            doEnemyMoves();
+        }
+    }
+
+    function enemyAttackHero(heroAtCoor, enemyAtCoor, enemySprite) {
+
+        if (player.x < enemySprite.x) {
+            enemySprite.anims.play('barbAttackLeft');
+        } else {
+            enemySprite.anims.play('barbAttack');
+        }
+    }
+
+    function pickHexAdjacentHerotoMoveTo(heroPos, enemyPos) {
+
+        let hexUpLeft;
+        let hexLeft;
+        let hexDownLeft;
+        let hexDownRight;
+        let hexRight;
+        let hexUpRight;
+
+        if (heroPos[1] % 2 === 0) {  //even rows
+
+            if (heroPos[0] - 1 >= 0 && heroPos[1] - 1 >= 0 && grid[heroPos[1] - 1][heroPos[0] - 1] === 0) {
+                hexUpLeft = [heroPos[0] - 1, heroPos[1] - 1];
+            }
+            if (heroPos[0] - 1 >= 0 && grid[heroPos[1]][heroPos[0] - 1] === 0) {
+                hexLeft = [heroPos[0] - 1, heroPos[1]];
+            }
+            if (heroPos[0] - 1 >= 0 && heroPos[1] + 1 <= MAXHEIGHT && grid[heroPos[1] + 1][heroPos[0] - 1] === 0) {
+                hexDownLeft = [heroPos[0] - 1, heroPos[1] + 1];
+            }
+            if (heroPos[1] + 1 <= MAXHEIGHT && grid[heroPos[1] + 1][heroPos[0]] === 0) {
+                hexDownRight = [heroPos[0], heroPos[1] + 1];
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH && grid[heroPos[1]][heroPos[0] + 1] === 0) {
+                hexRight = [heroPos[0] + 1, heroPos[1]];
+            }
+            if (heroPos[1] - 1 >= 0 && grid[heroPos[1] - 1][heroPos[0]] === 0) {
+                hexUpRight = [heroPos[0], heroPos[1] - 1];
+            }
+
+        } else {  //odd rows
+
+            if (heroPos[1] - 1 >= 0 && grid[heroPos[1] - 1][heroPos[0]] === 0) {
+                hexUpLeft = [heroPos[0], heroPos[1] - 1];
+            }
+            if (heroPos[0] - 1 >= 0 && grid[heroPos[1]][heroPos[0] - 1] === 0) {
+                hexLeft = [heroPos[0] - 1, heroPos[1]];
+            }
+            if (heroPos[1] + 1 <= MAXHEIGHT && grid[heroPos[1] + 1][heroPos[0]] === 0) {
+                hexDownLeft = [heroPos[0], heroPos[1] + 1];
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] + 1 <= MAXHEIGHT && grid[heroPos[1] + 1][heroPos[0] + 1] === 0) {
+                hexDownRight = [heroPos[0] + 1, heroPos[1] + 1];
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH && grid[heroPos[1]][heroPos[0] + 1] === 0) {
+                hexRight = [heroPos[0] + 1, heroPos[1]];
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] - 1 >= 0 && grid[heroPos[1] - 1][heroPos[0] + 1] === 0) {
+                hexUpRight = [heroPos[0] + 1, heroPos[1] - 1];
+            }
+
+        }
+
+                                // let distanceHexUpLeft = determineDepth(hexUpLeft, enemyPos);
+                                // let distanceHexLeft = determineDepth(hexLeft, enemyPos);
+                                // let distanceHexDownLeft = determineDepth(hexDownLeft, enemyPos);
+                                // let distanceHexDownRight = determineDepth(hexDownRight, enemyPos);
+                                // let distanceHexRight = determineDepth(hexRight, enemyPos);
+                                // let distanceHexUpRight = determineDepth(hexUpRight, enemyPos);
+
+                                //console.log("distance hex up left =", determineDepth(hexUpLeft, enemyPos));
+                                //console.log("distance hex left =", determineDepth(hexLeft, enemyPos));
+                                // console.log("distance hex down left =", distanceHexDownLeft);
+                                // console.log("distance hex down right =", distanceHexDownRight);
+                                // console.log("distance hex right =", distanceHexRight);
+                                // console.log("distance hex up right =", distanceHexUpRight);
+
+        let arrayOfDistances = [];
+
+        if (hexUpLeft) {
+            arrayOfDistances.push(hexUpLeft);
+        }
+        if (hexLeft) {
+            arrayOfDistances.push(hexLeft);
+        }
+        if (hexDownLeft) {
+            arrayOfDistances.push(hexDownLeft);
+        }
+        if (hexDownRight) {
+            arrayOfDistances.push(hexDownRight);
+        }
+        if (hexRight) {
+            arrayOfDistances.push(hexRight);
+        }
+        if (hexUpRight) {
+            arrayOfDistances.push(hexUpRight);
+        }
+
+        if (arrayOfDistances.length > 0) {
+
+            let shortestDistance = determineDepth(arrayOfDistances[0], enemyPos);
+            let closestIndex = 0;
+
+            for (let i = 0; i < arrayOfDistances.length; i++) {
+
+                console.log("depth for array of distances of ", i, " =", determineDepth(arrayOfDistances[i], enemyPos));
+                console.log("hex of i =", arrayOfDistances[i]);
+
+                if (determineDepth(arrayOfDistances[i], enemyPos) < shortestDistance) {
+                    shortestDistance = determineDepth(arrayOfDistances[i], enemyPos);
+                    closestIndex = i;
+                }
+            }
+
+            //console.log("shortestDistance = ", shortestDistance);
+            //console.log("hex chosen = ", arrayOfDistances[closestIndex]);
+
+            return arrayOfDistances[closestIndex];
+
+        } else {
+            return [];
+        }
+    }
+
+    function enemyMoveToNextHex(enemySprite, path, pos) {
+
+        let index = 0;
+
+        console.log("path = ", path);
+
+        let currentEnemyCoor = calculateCoordinates(path[0]);
+        var enemyTween;
+                               // let currentIndex = 0;
+
+        if (enemySprite.x > currentEnemyCoor[0]) {
+            enemySprite.anims.play('barbWalkLeft');
+        } else {
+            enemySprite.anims.play('barbWalk');
+        }
+
+        subMoveToNextHex();
+
+        function subMoveToNextHex() {
+
+            index++;
+
+            playerTween = selfScene.tweens.add({
+                targets: enemySprite,
+                x: currentEnemyCoor[0] - 2,
+                y: currentEnemyCoor[1] - 14,
+                duration: 400,
+                onComplete: function() {
+
+                //console.log("Got over heeeeeereeeee");
+
+                    if (index < path.length) {
+
+                        console.log("path[index] = ", path[index]);
+
+                        currentEnemyCoor = calculateCoordinates(path[index]);
+
+                        if (enemySprite.x > currentEnemyCoor[0]) {
+                            enemySprite.anims.play('barbWalkLeft');
+                        } else {
+                            enemySprite.anims.play('barbWalk');
+                        }
+
+                        subMoveToNextHex();
+
+                    } else { // finished path
+
+                        enemySprite.anims.play('barbSnooze');
+
+                        grid[pos[1]][pos[0]] = 0;
+                        let tempCoor = path[path.length - 1];
+                        grid[tempCoor[1]][tempCoor[0]] = 2;
+
+
+
+                        if (enemySprite.attackingThisTurn){
+
+                            enemyAttackHero(heroCoor, path[path.length - 1], enemySprite);
+                        } else {
+
+                            enemyIndex++;
+
+                            if (enemyIndex < enemyArray.length) {
+
+                            //  console.log("enemyIndex = ", enemyIndex);
+                            //  console.log("enemyArray.lenght = ", enemyArray.length);
+                                doEnemyMoves();
+                            } else {
+                                enemyIndex = 0;
+
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function determineAdjacentEnemies(heroPos) {
+
+        let output = [];
+
+        if (heroPos[1] % 2 === 0) {  //even rows
+
+            if (heroPos[0] - 1 >= 0 && heroPos[1] - 1 >= 0) {
+                if (grid[heroPos[1] - 1][heroPos[0] - 1] === 2) {
+                    output.push([heroPos[0] - 1, heroPos[1] - 1]);
+                }
+            }
+            if (heroPos[0] - 1 >= 0) {
+                if (grid[heroPos[1]][heroPos[0] - 1] === 2) {
+                    output.push([heroPos[0] - 1, heroPos[1]]);
+                }
+            }
+            if (heroPos[0] - 1 >= 0 && heroPos[1] + 1 <= MAXHEIGHT) {
+                if (grid[heroPos[1] + 1][heroPos[0] - 1] === 2) {
+                    output.push([heroPos[0] - 1, heroPos[1] + 1]);
+                }
+            }
+            if (heroPos[1] + 1 <= MAXHEIGHT) {
+                if (grid[heroPos[1] + 1][heroPos[0]] === 2) {
+                    output.push([heroPos[0], heroPos[1] + 1]);
+                }
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH) {
+                if (grid[heroPos[1]][heroPos[0] + 1] === 2) {
+                    output.push([heroPos[0] + 1, heroPos[1]]);
+                }
+            }
+            if (heroPos[1] - 1 >= 0) {
+                if (grid[heroPos[1] - 1][heroPos[0]] === 2) {
+                    output.push([heroPos[0], heroPos[1] - 1]);
+                }
+            }
+
+        } else {  //odd rows
+
+            if (heroPos[1] - 1 >= 0) {
+                if (grid[heroPos[1] - 1][heroPos[0]] === 2) {
+                    output.push([heroPos[0], heroPos[1] - 1]);
+                }
+            }
+            if (heroPos[0] - 1 >= 0) {
+                if (grid[heroPos[1]][heroPos[0] - 1] === 2) {
+                    output.push([heroPos[0] - 1, heroPos[1]]);
+                }
+            }
+            if (heroPos[1] + 1 <= MAXHEIGHT) {
+                if (grid[heroPos[1] + 1][heroPos[0]] === 2) {
+                    output.push([heroPos[0], heroPos[1] + 1]);
+                }
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] + 1 <= MAXHEIGHT) {
+                if (grid[heroPos[1] + 1][heroPos[0] + 1] === 2) {
+                    output.push([heroPos[0] + 1, heroPos[1] + 1]);
+                }
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH) {
+                if (grid[heroPos[1]][heroPos[0] + 1] === 2) {
+                    output.push([heroPos[0] + 1, heroPos[1]]);
+                }
+            }
+            if (heroPos[0] + 1 <= MAXWIDTH && heroPos[1] - 1 >= 0) {
+                if (grid[heroPos[1] - 1][heroPos[0] + 1] === 2) {
+                    output.push([heroPos[0] + 1, heroPos[1] - 1]);
+                }
+            }
+        }
+        return output;
     }
 
 </script>
