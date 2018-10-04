@@ -593,7 +593,7 @@
 
                     if (tileIsSelected === false) {
 
-                        if (tileCanBeSelected(hexClicked)) {
+                        if (tileCanBeSelected(hexClicked) && !playerMoving) {
 
                             tileSelected = hexClicked;
                             tileIsSelected = true;
@@ -818,9 +818,13 @@
 
                                                 console.log("array of adj enemies = ", arrayOfNearbyEnemies);
 
+                                                playerMoving = false;
+
                                                 if (arrayOfNearbyEnemies.length === 0) {
 
+                                                    playersTurn = false;
                                                     doEnemyMoves();
+
 
                                                 } else {  //There are adjacent enemies
 
@@ -1033,6 +1037,7 @@
                     if (arrayIncludesCoordinates(arrayOfNearbyEnemies, hexClicked)) {
 
                         //console.log("!!!!!!!");
+                        playersTurn = false;
                         heroAttackEnemy(hexClicked);
 
 
@@ -2837,6 +2842,7 @@
                                 doEnemyMoves();
                             } else {
                                 enemyIndex = 0;
+                                playersTurn = true;
 
                             }
                         }
