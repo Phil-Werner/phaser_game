@@ -1147,8 +1147,19 @@
     function attackComplete(sprite) {
         //console.log("boom shaka laka");
         sprite.anims.play('barbSnooze');
-        enemyIndex++;
         sprite.attackingThisTurn = false;
+
+                   console.log("enemyIndex = ", enemyIndex);
+            console.log("enemyArray.length - 1 = ", enemyArray.length - 1);
+
+        if (enemyIndex === enemyArray.length - 1) {
+
+            console.log("enemyIndex = ", enemyIndex);
+            console.log("enemyArray.length - 1 = ", enemyArray.length - 1);
+            playersTurn = true;
+        }
+
+        enemyIndex++;
         doEnemyMoves();
     }
 
@@ -2648,6 +2659,8 @@
             console.log("peppermint");
             doEnemyMoves();
         }
+
+
     }
 
     function enemyAttackHero(heroAtCoor, enemyAtCoor, enemySprite) {
@@ -2819,6 +2832,9 @@
                         subMoveToNextHex();
 
                     } else { // finished path
+
+
+
 
                         enemySprite.anims.play('barbSnooze');
 
