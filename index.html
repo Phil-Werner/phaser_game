@@ -47,6 +47,8 @@
     let selfScene;
     let enemyArray;
     let enemyIndex;
+    let heroArray;
+    let heroIndex;
     let awaitingEnemySelection = false;
     let arrayOfNearbyEnemies;
     let enemyDying = false;
@@ -84,11 +86,13 @@
 
     let cameFromGrid;
     let heroCoor = [2, 12];
+    let heroBCoor = [3, 12];
     let enemyCoor = [20, 1];
     let enemyBCoor = [20, 2];
     let enemyCCoor = [20, 3];
 
     grid[heroCoor[1]][heroCoor[0]] = 1;
+    grid[heroBCoor[1]][heroBCoor[0]] = 1;
     grid[enemyCoor[1]][enemyCoor[0]] = 2;
     grid[enemyBCoor[1]][enemyBCoor[0]] = 2;
     grid[enemyCCoor[1]][enemyCCoor[0]] = 2;
@@ -230,6 +234,7 @@
         this.add.image(596, 316, 'levelOne');
 
         let startingCoordinates = calculateCoordinates([heroCoor[0], heroCoor[1]]);
+        let heroBStartCoor = calculateCoordinates([heroBCoor[0], heroBCoor[1]]);
         let enemyStarCoor = calculateCoordinates([enemyCoor[0], enemyCoor[1]]);
         let enemyBStartCoor = calculateCoordinates([enemyBCoor[0], enemyBCoor[1]]);
         let enemyCStartCoor = calculateCoordinates([enemyCCoor[0], enemyCCoor[1]]);
@@ -448,6 +453,13 @@
         player = this.add.sprite(startingCoordinates[0] + 6, startingCoordinates[1] - 14, 'idle1').play('snooze');
         player.setScale(0.11);
         player.depth = 2;
+        player.coor = [heroCoor[0], heroCoor[1]];
+
+        heroB = this.physics.add.sprite(heroBStartCoor[0] + 6, heroBStartCoor[1] - 14, 'idle1').play('snooze');
+        heroB.setScale(0.11);
+        heroB.depth = 2;
+        heroB.setTint(0xff0000);
+        heroB.coor = [heroBCoor[0], heroBCoor[1]];
 
         enemy = this.physics.add.sprite(enemyStarCoor[0] - 2, enemyStarCoor[1] - 14, 'barbIdle1').play('barbSnooze');
         enemy.setScale(0.3);
@@ -476,6 +488,11 @@
         enemyArray = [enemy, enemyB, enemyC];
         enemyIndex = 0;
 
+        heroArray = [player, heroB];
+        heroIndex = 0;
+
+        //let heroSelectedHex;
+
         this.input.on('pointerdown', function (pointer)
         {
 
@@ -493,7 +510,7 @@
                             tileSelected = hexClicked;
                             tileIsSelected = true;
                             let coordinates;
-                            availableMoves = generateAvailableMoves(heroCoor, 7);
+                            availableMoves = generateAvailableMoves(hexClicked, 7);
 
                             for (let i = 0; i < availableMoves.length; i++) {
 
@@ -507,6 +524,10 @@
 
                             tileIsSelected = false;
 
+                            heroIndex = determineWhichHero(tileSelected);
+
+                            console.log("heroIndex = ", heroIndex);
+
                             starGroup.getChildren().forEach(function(elm) {
                                 if (elm.active) {
                                     elm.destroy();
@@ -517,30 +538,31 @@
                             starGroup.clear();
 
                             playerMoving = true;
-                            let heroCoorCoor = calculateCoordinates(heroCoor);
+                            let heroCoorCoor = calculateCoordinates(heroArray[heroIndex].coor);
                             let hexClickedCoor = calculateCoordinates(hexClicked);
-                            let hexPath = determinePath(hexClicked, heroCoor);
+                            let hexPath = determinePath(hexClicked, heroArray[heroIndex].coor);
 
                             selfScene = this;
 
                             let currentCoor = calculateCoordinates(hexPath[0]);
-                            var playerTween;
+                            let playerTween;
                             let currentIndex = 0;
 
-                            if (player.x > currentCoor[0]) {
-                                player.anims.play('left');
+                            if (heroArray[heroIndex].x > currentCoor[0]) {
+                                heroArray[heroIndex].anims.play('left');
                             } else {
-                                player.anims.play('right');
+                                heroArray[heroIndex].anims.play('right');
                             }
 
                             grid[hexClicked[1]][hexClicked[0]] = 1;
-                            grid[heroCoor[1]][heroCoor[0]] = 0;
+                            grid[heroArray[heroIndex].coor[1]][heroArray[heroIndex].coor[0]] = 0;
                             heroCoor = hexClicked;
+                            heroArray[heroIndex].coor = hexClicked;
 
                             moveToNextHex(hexPath[currentIndex]);
 
-                            let adjacentHeroCoorsB = determineAdjacentHeroes(enemyBCoor);
-                            let adjacentHeroCoorsC = determineAdjacentHeroes(enemyCCoor);
+                            //let adjacentHeroCoorsB = determineAdjacentHeroes(enemyBCoor);
+                            //let adjacentHeroCoorsC = determineAdjacentHeroes(enemyCCoor);
 
                             // console.log("Adj hero coors B = ", adjacentHeroCoorsB);
                             // console.log("Adj hero coors C = ", adjacentHeroCoorsC);
@@ -550,7 +572,7 @@
                                 currentCoor = calculateCoordinates(hexPath[currentIndex]);
 
                                 playerTween = selfScene.tweens.add({
-                                    targets: player,
+                                    targets: heroArray[heroIndex],
                                     x: currentCoor[0] + 6,
                                     y: currentCoor[1] - 14,
                                     duration: 400,
@@ -559,21 +581,21 @@
                                         currentIndex++;
 
                                         if (currentIndex < hexPath.length) {
-                                            if (player.x > calculateCoordinates(hexPath[currentIndex])[0]) {
+                                            if (heroArray[heroIndex].x > calculateCoordinates(hexPath[currentIndex])[0]) {
 
-                                                player.anims.play('left');
+                                                heroArray[heroIndex].anims.play('left');
                                             } else {
-                                                player.anims.play('right');
+                                                heroArray[heroIndex].anims.play('right');
                                             }
 
                                             moveToNextHex(hexPath[currentIndex]);
 
                                         } else {  //moved to last hex in path
 
-                                            player.anims.play('snooze');
+                                            heroArray[heroIndex].anims.play('snooze');
                                             tileIsSelected = false;
                                             let enemyIndex = 0;
-                                            arrayOfNearbyEnemies = determineAdjacentEnemies(heroCoor);
+                                            arrayOfNearbyEnemies = determineAdjacentEnemies(heroArray[heroIndex].coor);
                                             console.log("array of adj enemies = ", arrayOfNearbyEnemies);
                                             playerMoving = false;
 
@@ -633,6 +655,27 @@
     }
 
     function update ()  {
+    }
+
+    function determineWhichHero(hex) {
+
+        let output;
+
+       // console.log("we gonna do it all night long");
+
+        for (let i = 0; i < heroArray.length; i++) {
+
+            console.log("heroArray[i].coor = ", heroArray[i].coor);
+            console.log("hex = ", hex);
+
+            if (arrayIncludesCoordinates([heroArray[i].coor], hex)) {
+                output = i;
+                break;
+            }
+        }
+
+        return output;
+
     }
 
     function heroAttackEnemy(enemyHex) {
@@ -1071,10 +1114,6 @@
            // if (grid[coor[1]][coor[0]] === 1) {
              //   output.push(coor);
            // }
-
-
-
-
         }
 
         return output;
@@ -1481,6 +1520,297 @@
         return output;
     }
 
+    function createCameFromGrid(pos) {
+
+        let output = [];
+        let frontier = [];
+        let visited = [pos];
+        let coor;
+        let keepPushing = true;
+
+        cameFromGrid =     [[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+                            [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]];
+
+        //check if we're starting on an even row
+        if (pos[1] % 2 === 0) {
+
+            console.log("pos = ", pos);
+
+            // up left
+
+            if (pos[0] - 1 >= 0 && pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0] - 1] === 0) {
+                frontier.push([pos[0] - 1, pos[1] - 1]);
+                visited.push([pos[0] - 1, pos[1] - 1]);
+
+                cameFromGrid[pos[1] - 1][pos[0] - 1] = pos;
+            }
+
+            // left
+
+            if (pos[0] - 1 >= 0 && grid[pos[1]][pos[0] - 1] === 0) {
+                frontier.push([pos[0] - 1, pos[1]]);
+                visited.push([pos[0] - 1, pos[1]]);
+
+                cameFromGrid[pos[1]][pos[0] - 1] = pos;
+            }
+
+            // down left
+            if (pos[0] - 1 >= 0 && pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0] - 1] === 0) {
+                frontier.push([pos[0] - 1, pos[1] + 1]);
+                visited.push([pos[0] - 1, pos[1] + 1]);
+
+                cameFromGrid[pos[1] + 1][pos[0] - 1] = pos;
+            }
+
+            // down right
+            if (pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0]] === 0) {
+                frontier.push([pos[0], pos[1] + 1]);
+                visited.push([pos[0], pos[1] + 1]);
+
+                cameFromGrid[pos[1] + 1][pos[0]] = pos;
+            }
+
+            // right
+            if (pos[0] + 1 <= MAXWIDTH && grid[pos[1]][pos[0] + 1] === 0) {
+                frontier.push([pos[0] + 1, pos[1]]);
+                visited.push([pos[0] + 1, pos[1]]);
+
+                cameFromGrid[pos[1]][pos[0] + 1] = pos;
+            }
+
+            // up right
+            if (pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0]] === 0) {
+                frontier.push([pos[0], pos[1] - 1]);
+                visited.push([pos[0], pos[1] - 1]);
+
+                cameFromGrid[pos[1] - 1][pos[0]] = pos;
+            }
+
+        // odd rows
+        } else {
+
+           // console.log("BOOOOOOOOM");
+
+            //up left
+            if (pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0]] === 0) {
+                frontier.push([pos[0], pos[1] - 1]);
+                visited.push([pos[0], pos[1] - 1]);
+
+                cameFromGrid[pos[1] - 1][pos[0]] = pos;
+              //  elementsUntilDepthIncrease++;
+            }
+
+            // left
+            if (pos[0] - 1 >= 0 && grid[pos[1]][pos[0] - 1] === 0) {
+                frontier.push([pos[0] - 1, pos[1]]);
+                visited.push([pos[0] - 1, pos[1]]);
+
+                cameFromGrid[pos[1]][pos[0] - 1] = pos;
+             //   elementsUntilDepthIncrease++;
+            }
+
+            // down left
+            if (pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0]] === 0) {
+                frontier.push([pos[0], pos[1] + 1]);
+                visited.push([pos[0], pos[1] + 1]);
+
+                cameFromGrid[pos[1] + 1][pos[0]] = pos;
+             //   elementsUntilDepthIncrease++;
+            }
+
+            // down right
+            if (pos[0] + 1 <= MAXWIDTH && pos[1] + 1 <= MAXHEIGHT && grid[pos[1] + 1][pos[0] + 1] === 0) {
+                frontier.push([pos[0] + 1, pos[1] + 1]);
+                visited.push([pos[0] + 1, pos[1] + 1]);
+
+                cameFromGrid[pos[1] + 1][pos[0] + 1] = pos;
+             //   elementsUntilDepthIncrease++;
+
+            }
+
+            // right
+            if (pos[0] + 1 <= MAXWIDTH && grid[pos[1]][pos[0] + 1] === 0) {
+                frontier.push([pos[0] + 1, pos[1]]);
+                visited.push([pos[0] + 1, pos[1]]);
+
+                cameFromGrid[pos[1]][pos[0] + 1] = pos;
+             //   elementsUntilDepthIncrease++;
+            }
+
+            // up right
+            if (pos[0] + 1 <= MAXWIDTH && pos[1] - 1 >= 0 && grid[pos[1] - 1][pos[0] + 1] === 0) {
+                frontier.push([pos[0] + 1, pos[1] - 1]);
+                visited.push([pos[0] + 1, pos[1] - 1]);
+
+                cameFromGrid[pos[1] - 1][pos[0] + 1] = pos;
+               // elementsUntilDepthIncrease++;
+            }
+        }
+
+        while (frontier.length !== 0) {
+
+            coor = frontier.shift();
+           // keepPushing = true;
+
+            // if (determineDepth(coor, pos) > range) {
+            //     keepPushing = false;
+            // }
+
+            // if (grid[coor[1]][coor[0]] === 0 && keepPushing) {
+            //     output.push(coor);
+            // }
+
+            if (coor[1] % 2 === 0) {
+
+                // up left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] - 1]) && coor[0] - 1 >= 0 && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0] - 1] === 0 && keepPushing ) {
+
+                    frontier.push([coor[0] - 1, coor[1] - 1]);
+                    visited.push([coor[0] - 1, coor[1] - 1]);
+
+                    cameFromGrid[coor[1] - 1][coor[0] - 1] = coor;
+                }
+
+                // left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && grid[coor[1]][coor[0] - 1] === 0 && keepPushing) {
+
+                    frontier.push([coor[0] - 1, coor[1]]);
+                    visited.push([coor[0] - 1, coor[1]]);
+
+                    cameFromGrid[coor[1]][coor[0] - 1] = coor;
+
+                }
+
+
+                // down left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1] + 1]) && coor[0] - 1 >= 0 && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0] - 1] === 0 && keepPushing) {
+
+                    frontier.push([coor[0] - 1, coor[1] + 1]);
+                    visited.push([coor[0] - 1, coor[1] + 1]);
+
+                    cameFromGrid[coor[1] + 1][coor[0] - 1] = coor;
+                }
+
+                // down right
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0]] === 0 && keepPushing) {
+
+                    frontier.push([coor[0], coor[1] + 1]);
+                    visited.push([coor[0], coor[1] + 1]);
+
+                    cameFromGrid[coor[1] + 1][coor[0]] = coor;
+
+                }
+
+                // right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && grid[coor[1]][coor[0] + 1] === 0 && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1]]);
+                    visited.push([coor[0] + 1, coor[1]]);
+
+                    cameFromGrid[coor[1]][coor[0] + 1] = coor;
+
+                }
+
+                // up right
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0]] === 0 && keepPushing) {
+
+                    frontier.push([coor[0], coor[1] - 1]);
+                    visited.push([coor[0], coor[1] - 1]);
+
+                    cameFromGrid[coor[1] - 1][coor[0]] = coor;
+                }
+
+            } else {  //odd rows
+
+                //up left
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] - 1]) && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0]] === 0 && keepPushing) {
+
+                    frontier.push([coor[0], coor[1] - 1]);
+                    visited.push([coor[0], coor[1] - 1]);
+
+                    cameFromGrid[coor[1] - 1][coor[0]] = coor;
+                }
+
+                // left
+                if (!arrayIncludesCoordinates(visited, [coor[0] - 1, coor[1]]) && coor[0] - 1 >= 0 && grid[coor[1]][coor[0] - 1] === 0 && keepPushing) {
+
+                    frontier.push([coor[0] - 1, coor[1]]);
+                    visited.push([coor[0] - 1, coor[1]]);
+
+                    cameFromGrid[coor[1]][coor[0] - 1] = coor;
+                }
+
+                //down left
+                if (!arrayIncludesCoordinates(visited, [coor[0], coor[1] + 1]) && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0]] === 0 && keepPushing) {
+
+                    frontier.push([coor[0], coor[1] + 1]);
+                    visited.push([coor[0], coor[1] + 1]);
+
+                    cameFromGrid[coor[1] + 1][coor[0]] = coor;
+                }
+
+                //down right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] + 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] + 1 <= MAXHEIGHT && grid[coor[1] + 1][coor[0] + 1] === 0 && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1] + 1]);
+                    visited.push([coor[0] + 1, coor[1] + 1]);
+
+                    cameFromGrid[coor[1] + 1][coor[0] + 1] = coor;
+
+                }
+
+                //right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1]]) && coor[0] + 1 <= MAXWIDTH && grid[coor[1]][coor[0] + 1] === 0 && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1]]);
+                    visited.push([coor[0] + 1, coor[1]]);
+
+                    cameFromGrid[coor[1]][coor[0] + 1] = coor;
+
+                }
+
+                //up right
+                if (!arrayIncludesCoordinates(visited, [coor[0] + 1, coor[1] - 1]) && coor[0] + 1 <= MAXWIDTH && coor[1] - 1 >= 0 && grid[coor[1] - 1][coor[0] + 1] === 0 && keepPushing) {
+
+                    frontier.push([coor[0] + 1, coor[1] - 1]);
+                    visited.push([coor[0] + 1, coor[1] - 1]);
+
+                    cameFromGrid[coor[1] - 1][coor[0] + 1] = coor;
+                }
+            }
+
+        }
+
+        return;
+    }
+
     function determineDepth(coord, enemyPos) {
 
             let coordInCube = oddr_to_cube(coord);
@@ -1625,13 +1955,31 @@
                     console.log("targetHex = ", targetHex);
 
                     let enemyRange = 4;
-                    let distanceToTarget = determineDepth(targetHex, enemyArray[enemyIndex].coor);
+
+                   // let tempMoves = generateAvailableMoves(enemyArray[enemyIndex].coor, enemyRange);
+
+                    //console.log("")
+
+                    //let tempPath = determinePath(targetHex, enemyArray[enemyIndex].coor);
+
+                   // let distanceToTarget = determineDepth(targetHex, enemyArray[enemyIndex].coor);
+
+                    //console.log("tempPath = ", tempPath);
+
+                    //let distanceToTarget = tempPath.length;
+
+                    createCameFromGrid(enemyArray[enemyIndex].coor);
+
+                    let tempPath = determinePath(targetHex, enemyArray[enemyIndex].coor);
+
+                    let distanceToTarget = tempPath.length;
 
                     console.log("Distance to target = ", distanceToTarget);
 
                     if (enemyRange < distanceToTarget) {
 
                         let enemyAvailableMoves = generateAvailableMoves(enemyArray[enemyIndex].coor, enemyRange);
+
 
                                                                 //let closerTargerHex = pickHexClosestToTarget(enemyRange, targetHex);
 
@@ -1666,13 +2014,14 @@
                         let enemyAvailableMoves = generateAvailableMoves(enemyArray[enemyIndex].coor, enemyRange);
                         let enemyHexPath = determinePath(targetHex, enemyArray[enemyIndex].coor);
 
-                        console.log("enemyHex Path = ", enemyHexPath);
+                        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        console.log("enemyHex Path for enemyindex = ", enemyIndex, "enemyHexPath = ", enemyHexPath);
 
                         enemyArray[enemyIndex].attackingThisTurn = true;
 
                         enemyMoveToNextHex(enemyArray[enemyIndex], enemyHexPath, enemyArray[enemyIndex].coor);
 
-                        console.log("enemeyHexPath at end = ", enemyHexPath)
+                        console.log("!!!enemeyHexPath at end = ", enemyHexPath)
                         enemyArray[enemyIndex].coor = enemyHexPath[enemyHexPath.length - 1];
                     }
                 }
