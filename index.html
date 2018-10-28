@@ -468,6 +468,7 @@
         enemy.attackingThisTurn = false;
         enemy.hitPoints = 3;
         enemy.isDead = false;
+        enemy.indexOfHeroToBeAttacked = 0;
 
         enemyB = this.physics.add.sprite(enemyBStartCoor[0] - 2, enemyBStartCoor[1] - 14, 'barbIdle1').play('barbSnooze');
         //enemyB.setTint(0xff0000);
@@ -476,6 +477,7 @@
         enemyB.attackingThisTurn = false;
         enemyB.hitPoints = 3;
         enemyB.isDead = false;
+        enemyB.indexOfHeroToBeAttacked = 0;
 
         enemyC = this.physics.add.sprite(enemyCStartCoor[0] - 2, enemyCStartCoor[1] - 14, 'barbIdle1').play('barbSnooze');
         enemyC.setTint(0xff0000);
@@ -484,6 +486,7 @@
         enemyC.hitPoints = 3;
         enemyC.attackingThisTurn = false;
         enemyC.isDead = false;
+        enemyC.indexOfHeroToBeAttacked = 0;
 
         enemyArray = [enemy, enemyB, enemyC];
         enemyIndex = 0;
@@ -616,7 +619,8 @@
 
                         } else {  //here we did not click on a star, but might have clicked on adjacent enemy
 
-                            arrayOfNearbyEnemies = determineAdjacentEnemies(heroCoor);
+
+                            arrayOfNearbyEnemies = determineAdjacentEnemies(heroArray[heroIndex]);
                             if (arrayIncludesCoordinates(arrayOfNearbyEnemies, hexClicked)) {
                                 starGroup.getChildren().forEach(function(elm) {
                                     if (elm.active) {
@@ -629,7 +633,7 @@
 
                                 tileIsSelected = false;
 
-                                heroAttackEnemy(hexClicked);
+                                heroAttackEnemy(heroIndex, hexClicked);
                             }
                         }
                     }
@@ -640,7 +644,7 @@
 
                         //console.log("!!!!!!!");
                         playersTurn = false;
-                        heroAttackEnemy(hexClicked);
+                        heroAttackEnemy(heroIndex, hexClicked);
                     } else {
                         //console.log("OHOHOHOHO");
                     }
@@ -678,7 +682,28 @@
 
     }
 
-    function heroAttackEnemy(enemyHex) {
+    function determineWhichEnemy(hex) {
+
+        let output;
+
+       // console.log("we gonna do it all night long");
+
+        for (let i = 0; i < enemyArray.length; i++) {
+
+           // console.log("heroArray[i].coor = ", heroArray[i].coor);
+           // console.log("hex = ", hex);
+
+            if (arrayIncludesCoordinates([enemyArray[i].coor], hex)) {
+                output = i;
+                break;
+            }
+        }
+
+        return output;
+
+    }
+
+    function heroAttackEnemy(heroAttackingIndex, enemyHex) {
 
         let enemySprite;
 
@@ -708,10 +733,10 @@
 
         //enemySprite.hitPoints--;
 
-        if (player.x > enemySprite.x) {
-            player.anims.play('heroAttackLeft');
+        if (heroArray[heroAttackingIndex].x > enemySprite.x) {
+            heroArray[heroAttackingIndex].anims.play('heroAttackLeft');
         } else {
-            player.anims.play('heroAttack');
+            heroArray[heroAttackingIndex].anims.play('heroAttack');
         }
 
         //console.log("enemy Sprite.coor = ", enemySprite.coor);
@@ -805,7 +830,10 @@
 
         for (let i = 0; i < 1000; i++) {
 
-            if (arrayIncludesCoordinates(guyCoor, currentHex)) break;
+            if (arrayIncludesCoordinates(guyCoor, currentHex)) {
+                //console.log("WWWwwwwwWWWWWWWWWWWWWOOOOOOOAAAAHHH");
+                break;
+            }
             output.push(currentHex);
             currentHex = cameFromGrid[currentHex[1]][currentHex[0]];
         }
@@ -1510,7 +1538,7 @@
         let path;
 
         for (let i = output.length - 1; i >= 0; i--) {
-            path = determinePath(output[i], heroCoor);
+            path = determinePath(output[i], heroArray[heroIndex].coor);
 
             if (path.length > range) {
                 output.splice(i, 1);
@@ -1842,54 +1870,54 @@
         player.y = testCoor[1] - 15;
     }
 
-    function enemyRangedAttack(heroPos, enemyPos) {
+    // function enemyRangedAttack(heroPos, enemyPos) {
 
-       // this.add.image(enemyPos[0] - 5, enemyPos[1] - 5, 'spark');
-       // spark.setVelocityX(200);
+    //    // this.add.image(enemyPos[0] - 5, enemyPos[1] - 5, 'spark');
+    //    // spark.setVelocityX(200);
 
-       //console.log("GGGGG got here");
+    //    //console.log("GGGGG got here");
 
-        let bulletCoor = calculateCoordinates(enemyPos);
+    //     let bulletCoor = calculateCoordinates(enemyPos);
 
-        bullet.setActive(true);
-        bullet.setVisible(true);
-        bullet.x = bulletCoor[0] - 5;
-        bullet.y = bulletCoor[1] - 5;
+    //     bullet.setActive(true);
+    //     bullet.setVisible(true);
+    //     bullet.x = bulletCoor[0] - 5;
+    //     bullet.y = bulletCoor[1] - 5;
 
-        let x;
-        let y;
+    //     let x;
+    //     let y;
 
-        let heroCoor = calculateCoordinates(heroPos);
-        let enemyCoor = calculateCoordinates(enemyPos);
+    //     let heroCoor = calculateCoordinates(heroPos);
+    //     let enemyCoor = calculateCoordinates(enemyPos);
 
-        let angle = Phaser.Math.Angle.Between(heroCoor[0], heroCoor[1], enemyCoor[0], enemyCoor[1]);
+    //     let angle = Phaser.Math.Angle.Between(heroCoor[0], heroCoor[1], enemyCoor[0], enemyCoor[1]);
 
-        x = Math.cos(angle) * 200;
-        y = Math.sin(angle) * 200;
+    //     x = Math.cos(angle) * 200;
+    //     y = Math.sin(angle) * 200;
 
-        bullet.setVelocityX(-x);
-        bullet.setVelocityY(-y);
-        // bullet.setAccelerationY(100);
+    //     bullet.setVelocityX(-x);
+    //     bullet.setVelocityY(-y);
+    //     // bullet.setAccelerationY(100);
 
 
-        //game.physics.arcade.moveToXY(bullet, player.x, player.y, 0, 3000);
+    //     //game.physics.arcade.moveToXY(bullet, player.x, player.y, 0, 3000);
 
-        enemyBulletMoving = true;
+    //     enemyBulletMoving = true;
 
-        if (x > 0) {
-            enemyBulletMovingLeft = true;
-        } else if (x < 0) {
-            enemyBulletMovingRight = true;
-        }
+    //     if (x > 0) {
+    //         enemyBulletMovingLeft = true;
+    //     } else if (x < 0) {
+    //         enemyBulletMovingRight = true;
+    //     }
 
-        if (y > 0) {
-            enemyBulletMovingUp = true;
-        } else if (y < 0) {
-            enemyBulletMovingDown = true;
-        }
+    //     if (y > 0) {
+    //         enemyBulletMovingUp = true;
+    //     } else if (y < 0) {
+    //         enemyBulletMovingDown = true;
+    //     }
 
-        enemyBulletMovingTo = heroPos;
-    }
+    //     enemyBulletMovingTo = heroPos;
+    // }
 
     // function anEnemyHasDied() {
 
@@ -1914,6 +1942,9 @@
     }
 
     function doEnemyMoves() {
+
+        let adjacentHeroCoors;
+
 
         if (enemyDying && !enemy.isDead) {
 
@@ -1945,10 +1976,15 @@
         if (!enemyArray[enemyIndex].isDead) {
 
             console.log("enemyArray[enemyIndex].coor =  ", enemyArray[enemyIndex].coor);
-            let adjacentHeroCoors = determineAdjacentHeroes(enemyArray[enemyIndex].coor);
+            adjacentHeroCoors = determineAdjacentHeroes(enemyArray[enemyIndex].coor);
             if (adjacentHeroCoors.length === 0) {
 
-                let targetHex = pickHexAdjacentHerotoMoveTo(heroCoor, enemyArray[enemyIndex].coor);
+
+                let closestHeroIndex = pickClosestHeroToMoveToward(enemyArray[enemyIndex]);
+
+                console.log("closestHeroIndex = ", closestHeroIndex);
+
+                let targetHex = pickHexAdjacentHerotoMoveTo(heroArray[closestHeroIndex].coor, enemyArray[enemyIndex].coor);
 
                 if (targetHex.length > 0) {
 
@@ -1969,6 +2005,7 @@
                     //let distanceToTarget = tempPath.length;
 
                     createCameFromGrid(enemyArray[enemyIndex].coor);
+
 
                     let tempPath = determinePath(targetHex, enemyArray[enemyIndex].coor);
 
@@ -2019,6 +2056,13 @@
 
                         enemyArray[enemyIndex].attackingThisTurn = true;
 
+                        let newAdjacentHeroCoors = determineAdjacentHeroes(enemyHexPath[enemyHexPath.length - 1]);
+
+                        console.log("newadjacentHeroCoors = ", newAdjacentHeroCoors);
+                        console.log("newadjacentHeroCoors[0] = ", newAdjacentHeroCoors[0]);
+
+                        enemyArray[enemyIndex].indexOfHeroToBeAttacked = determineWhichHero(newAdjacentHeroCoors[0]);
+
                         enemyMoveToNextHex(enemyArray[enemyIndex], enemyHexPath, enemyArray[enemyIndex].coor);
 
                         console.log("!!!enemeyHexPath at end = ", enemyHexPath)
@@ -2029,7 +2073,9 @@
 
             } else { // there are nearby heroes
 
-            enemyAttackHero(heroCoor, enemyArray[enemyIndex].coor, enemyArray[enemyIndex]);
+            let currentHeroIndex = determineWhichHero(adjacentHeroCoors[0]);
+
+            enemyAttackHero(heroArray[currentHeroIndex], enemyArray[enemyIndex]);
 
             }
 
@@ -2042,9 +2088,41 @@
 
     }
 
-    function enemyAttackHero(heroAtCoor, enemyAtCoor, enemySprite) {
+    function pickClosestHeroToMoveToward(enemyMoving) {
 
-        if (player.x < enemySprite.x) {
+        let output;
+        let currentClosest = 0;
+        let closestDepth = 100;
+        let currentDepth;
+
+        for (let i = 0; i < heroArray.length; i++) {
+
+            //console.log("i = ", i);
+            //console.log("heroArray.length = ", heroArray.length);
+
+            //console.log("!!!!!!!!!!! enemyMoving.coor =", enemyMoving.coor, "heroArray[i].coor =", heroArray[i].coor);
+
+            currentDepth = determineDepth(enemyMoving.coor, heroArray[i].coor);
+
+            //console.log("depth of currentDepth =" , currentDepth);
+
+            if (currentDepth < closestDepth) {
+                currentClosest = i;
+                closestDepth = currentDepth;
+            }
+        }
+
+        return currentClosest;
+    }
+
+
+
+    function enemyAttackHero(hero, enemySprite) {
+
+        //let currentHeroIndex = determineWhichHero(heroAtCoor);
+
+
+        if (hero.x < enemySprite.x) {
             enemySprite.anims.play('barbAttackLeft');
         } else {
             enemySprite.anims.play('barbAttack');
@@ -2225,7 +2303,10 @@
 
                         if (enemySprite.attackingThisTurn){
 
-                            enemyAttackHero(heroCoor, path[path.length - 1], enemySprite);
+                            console.log("enemysprite.indexofherotobeattacked = ", enemySprite.indexOfHeroToBeAttacked);
+                            console.log("enemy sprite hit points = ", enemySprite.hitPoints);
+
+                            enemyAttackHero(heroArray[enemySprite.indexOfHeroToBeAttacked], enemySprite);
                         } else {
 
                             enemyIndex++;
