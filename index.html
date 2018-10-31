@@ -512,6 +512,7 @@
 
                             tileSelected = hexClicked;
                             tileIsSelected = true;
+                            heroIndex = determineWhichHero(tileSelected);
                             let coordinates;
                             availableMoves = generateAvailableMoves(hexClicked, 7);
 
@@ -620,7 +621,12 @@
                         } else {  //here we did not click on a star, but might have clicked on adjacent enemy
 
 
-                            arrayOfNearbyEnemies = determineAdjacentEnemies(heroArray[heroIndex]);
+                            console.log("AAAAAAAAAAA");
+
+                            arrayOfNearbyEnemies = determineAdjacentEnemies(heroArray[heroIndex].coor);
+
+                            console.log("Array of nearby enemies = ", arrayOfNearbyEnemies);
+
                             if (arrayIncludesCoordinates(arrayOfNearbyEnemies, hexClicked)) {
                                 starGroup.getChildren().forEach(function(elm) {
                                     if (elm.active) {
@@ -732,6 +738,8 @@
         }
 
         //enemySprite.hitPoints--;
+
+        console.log("heroAttackingIndex = ", heroAttackingIndex);
 
         if (heroArray[heroAttackingIndex].x > enemySprite.x) {
             heroArray[heroAttackingIndex].anims.play('heroAttackLeft');
@@ -2073,9 +2081,9 @@
 
             } else { // there are nearby heroes
 
-            let currentHeroIndex = determineWhichHero(adjacentHeroCoors[0]);
+                let currentHeroIndex = determineWhichHero(adjacentHeroCoors[0]);
 
-            enemyAttackHero(heroArray[currentHeroIndex], enemyArray[enemyIndex]);
+                enemyAttackHero(heroArray[currentHeroIndex], enemyArray[enemyIndex]);
 
             }
 
