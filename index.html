@@ -454,12 +454,14 @@
         player.setScale(0.11);
         player.depth = 2;
         player.coor = [heroCoor[0], heroCoor[1]];
+        player.hasMovedThisTurn = false;
 
         heroB = this.physics.add.sprite(heroBStartCoor[0] + 6, heroBStartCoor[1] - 14, 'idle1').play('snooze');
         heroB.setScale(0.11);
         heroB.depth = 2;
         heroB.setTint(0xff0000);
         heroB.coor = [heroBCoor[0], heroBCoor[1]];
+        heroB.hasMovedThisTurn = false;
 
         enemy = this.physics.add.sprite(enemyStarCoor[0] - 2, enemyStarCoor[1] - 14, 'barbIdle1').play('barbSnooze');
         enemy.setScale(0.3);
@@ -506,20 +508,34 @@
                 if (!awaitingEnemySelection) {
 
                     enemyIndex = 0;
+
+                    console.log("tileIsSelected = ", tileIsSelected);
+
                     if (tileIsSelected === false) {
 
                         if (tileCanBeSelected(hexClicked) && !playerMoving) {
 
                             tileSelected = hexClicked;
-                            tileIsSelected = true;
                             heroIndex = determineWhichHero(tileSelected);
-                            let coordinates;
-                            availableMoves = generateAvailableMoves(hexClicked, 7);
 
-                            for (let i = 0; i < availableMoves.length; i++) {
+                            console.log("heroIndex = ", heroIndex);
 
-                                coordinates = calculateCoordinates(availableMoves[i]);
-                                starGroup.create(coordinates[0], coordinates[1], 'star');
+                            if (heroArray[heroIndex].hasMovedThisTurn === false) {
+
+
+                                tileIsSelected = true;
+
+                                heroArray[heroIndex].hasMovedThisTurn = true;
+                                let coordinates;
+                                availableMoves = generateAvailableMoves(hexClicked, 7);
+
+                                for (let i = 0; i < availableMoves.length; i++) {
+
+                                    coordinates = calculateCoordinates(availableMoves[i]);
+                                    starGroup.create(coordinates[0], coordinates[1], 'star');
+                                }
+                            } else {
+
                             }
                         }
                     } else {        //tile is selected
@@ -605,8 +621,24 @@
 
                                             if (arrayOfNearbyEnemies.length === 0) {
 
-                                                playersTurn = false;
-                                                doEnemyMoves();
+
+
+                                                if (!anyHeroesCanStillMove()) {
+
+                                                    playersTurn = false;
+
+
+                                                    for (let i = 0; i < heroArray.length; i++) {
+
+                                                        heroArray[i].hasMovedThisTurn = false;
+                                                    }
+
+                                                    doEnemyMoves();
+
+                                                } else {
+
+
+                                                }
 
 
                                             } else {  //There are adjacent enemies
@@ -665,6 +697,20 @@
     }
 
     function update ()  {
+    }
+
+    function anyHeroesCanStillMove() {
+
+        let output = false;
+
+        for (let i = 0; i < heroArray.length; i++) {
+            if (heroArray[i].hasMovedThisTurn === false) {
+                output = true;
+            }
+        }
+
+        return output;
+
     }
 
     function determineWhichHero(hex) {
@@ -755,7 +801,17 @@
     function heroAttackComplete(sprite) {
         sprite.anims.play('snooze');
         awaitingEnemySelection = false;
-        doEnemyMoves();
+
+        if (!anyHeroesCanStillMove()) {
+
+            for (let i = 0; i < heroArray.length; i++) {
+                heroArray[i].hasMovedThisTurn = false;
+            }
+
+            doEnemyMoves();
+        } else {
+            playersTurn = true;
+        }
     }
 
     function attackComplete(sprite) {
