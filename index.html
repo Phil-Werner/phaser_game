@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Phaser 3 Game </title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.19.0/dist/phaser.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -21,6 +21,11 @@
         physics: {
             default: 'arcade',
             arcade: {
+
+                setBounds: {
+                    width: 3000,
+                    height: 600
+                },
                 gravity: { y: 0 },
                 debug: false
             }
@@ -32,6 +37,7 @@
         }
     };
 
+    let hasClickedOnce = false;
     let player;
     let objectIsSelected = false;
     let playerMoving = false;
@@ -102,6 +108,9 @@
 
     function preload ()
     {
+
+        this.load.image('rightArrow', 'assets/right.jpg');
+
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/platform.png');
         this.load.image('star', 'assets/star.png');
@@ -232,6 +241,15 @@
     {
         starGroup = this.add.group();
         this.add.image(596, 316, 'levelOne');
+
+        let rArrow = this.add.sprite(700, 400, 'rightArrow').setInteractive();
+        rArrow.setScale(0.3);
+
+        rArrow.on('pointerdown', function (pointer) {
+
+            console.log("Right arrow pressed");
+
+            });
 
         let startingCoordinates = calculateCoordinates([heroCoor[0], heroCoor[1]]);
         let heroBStartCoor = calculateCoordinates([heroBCoor[0], heroBCoor[1]]);
@@ -376,7 +394,6 @@
             ],
             frameRate: 16,
             repeat: 0,
-            onComplete: attackComplete
         });
 
         this.anims.create({
@@ -393,7 +410,6 @@
             ],
             frameRate: 16,
             repeat: 0,
-            onComplete: attackComplete
         });
 
         this.anims.create({
@@ -412,8 +428,9 @@
             ],
             frameRate: 16,
             repeat: 0,
-            onComplete: heroAttackComplete
         });
+
+
 
         this.anims.create({
             key: 'heroAttackLeft',
@@ -431,7 +448,6 @@
             ],
             frameRate: 16,
             repeat: 0,
-            onComplete: heroAttackComplete
         });
 
         this.anims.create({
@@ -455,6 +471,7 @@
         player.depth = 2;
         player.coor = [heroCoor[0], heroCoor[1]];
         player.hasMovedThisTurn = false;
+        //player.setScrollFactor(0);
 
         heroB = this.physics.add.sprite(heroBStartCoor[0] + 6, heroBStartCoor[1] - 14, 'idle1').play('snooze');
         heroB.setScale(0.11);
@@ -500,10 +517,22 @@
 
         this.input.on('pointerdown', function (pointer)
         {
+            if (hasClickedOnce) {
+                this.cameras.main.scrollX = 0;
+            }
+            if (!hasClickedOnce) {
+                this.cameras.main.scrollX = 200;
+                hasClickedOnce = true;
 
+            }
+
+        }, this);
+/*
             let hexClicked = determineWhichHex(pointer.x, pointer.y);
 
             if (playersTurn) {
+
+              //  enemyArray[0].on('animationcomplete', stupid);
 
                 if (!awaitingEnemySelection) {
 
@@ -529,6 +558,8 @@
                                 let coordinates;
                                 availableMoves = generateAvailableMoves(hexClicked, 7);
 
+                                console.log("availalbeMoves =", availableMoves);
+
                                 for (let i = 0; i < availableMoves.length; i++) {
 
                                     coordinates = calculateCoordinates(availableMoves[i]);
@@ -548,14 +579,16 @@
 
                             console.log("heroIndex = ", heroIndex);
 
-                            starGroup.getChildren().forEach(function(elm) {
-                                if (elm.active) {
-                                    elm.destroy();
-                                }
-                               //elm.clear(false, true);
-                            });
+                           // starGroup.getChildren().forEach(function(elm) {
+                            //   if (elm.active) {
+                            //        elm.destroy();
+                            //    }
+                             //  elm.clear(false, true);
+                           // });
 
-                            starGroup.clear();
+                            starGroup.clear(true, true);
+
+                            console.log("Stargroup = ", starGroup);
 
                             playerMoving = true;
                             let heroCoorCoor = calculateCoordinates(heroArray[heroIndex].coor);
@@ -633,6 +666,8 @@
                                                         heroArray[i].hasMovedThisTurn = false;
                                                     }
 
+
+                                                    console.log("Calling do enemy moves from input");
                                                     doEnemyMoves();
 
                                                 } else {
@@ -660,16 +695,18 @@
                             console.log("Array of nearby enemies = ", arrayOfNearbyEnemies);
 
                             if (arrayIncludesCoordinates(arrayOfNearbyEnemies, hexClicked)) {
-                                starGroup.getChildren().forEach(function(elm) {
-                                    if (elm.active) {
-                                        elm.destroy();
-                                    }
+                               // starGroup.getChildren().forEach(function(elm) {
+                                  //  if (elm.active) {
+                                //        elm.destroy();
+                              //      }
                                     //elm.clear(false, true);
-                                });
+                            //    });
 
-                                starGroup.clear();
+                                starGroup.clear(true, true);
 
                                 tileIsSelected = false;
+
+                                console.log("Made it here");
 
                                 heroAttackEnemy(heroIndex, hexClicked);
                             }
@@ -693,7 +730,7 @@
             console.log("spaz", pointer.x, pointer.y);
 
         }, this);
-
+*/
     }
 
     function update ()  {
@@ -795,11 +832,16 @@
 
         //console.log("enemy Sprite.coor = ", enemySprite.coor);
 
+        heroArray[heroAttackingIndex].once('animationcomplete', heroAttackComplete);
 
     }
 
-    function heroAttackComplete(sprite) {
-        sprite.anims.play('snooze');
+    function heroAttackComplete() {
+
+
+        console.log("heroattack complete function has begun. Enemey index = ", enemyIndex);
+
+        heroArray[heroIndex].anims.play('snooze');
         awaitingEnemySelection = false;
 
         if (!anyHeroesCanStillMove()) {
@@ -808,26 +850,30 @@
                 heroArray[i].hasMovedThisTurn = false;
             }
 
+            console.log("Calling doenemymovews from heroattackcomplete");
+
             doEnemyMoves();
         } else {
             playersTurn = true;
         }
     }
 
-    function attackComplete(sprite) {
-        //console.log("boom shaka laka");
-        sprite.anims.play('barbSnooze');
-        sprite.attackingThisTurn = false;
+    function attackComplete() {
+        console.log("attackComplete just called");
+        enemyArray[enemyIndex].anims.play('barbSnooze');
+        enemyArray[enemyIndex].attackingThisTurn = false;
 
-                   console.log("enemyIndex = ", enemyIndex);
+                   console.log("In attackComplete function.  EnemyIndex = ", enemyIndex);
             console.log("enemyArray.length - 1 = ", enemyArray.length - 1);
 
         if (enemyIndex === enemyArray.length - 1) {
 
-            console.log("enemyIndex = ", enemyIndex);
-            console.log("enemyArray.length - 1 = ", enemyArray.length - 1);
+          //  console.log("enemyIndex = ", enemyIndex);
+          //  console.log("enemyArray.length - 1 = ", enemyArray.length - 1);
             playersTurn = true;
         }
+
+        console.log("Calling doEnemymoves from attackComplete function");
 
         enemyIndex++;
         doEnemyMoves();
@@ -2030,14 +2076,24 @@
         }
 
 
+        console.log("Indo enemey  moevs.  enemyIndex = ", enemyIndex);
+        console.log("Indo enemy mooevs.  enemyArray.length - 1 = ", enemyArray.length - 1);
+
                               //  for (let i = 0; i < enemyArray.length; i++) {
         if (enemyIndex > enemyArray.length - 1) {
+
+            console.log("abcd");
 
             playersTurn = true;
             return;
         }
 
+        console.log("efgh");
+
         if (!enemyArray[enemyIndex].isDead) {
+
+            console.log("###At this point ,enemy index = ", enemyIndex);
+
 
             console.log("enemyArray[enemyIndex].coor =  ", enemyArray[enemyIndex].coor);
             adjacentHeroCoors = determineAdjacentHeroes(enemyArray[enemyIndex].coor);
@@ -2067,6 +2123,8 @@
                     //console.log("tempPath = ", tempPath);
 
                     //let distanceToTarget = tempPath.length;
+
+                    console.log("TTTTAt this point ,enemy index = ", enemyIndex);
 
                     createCameFromGrid(enemyArray[enemyIndex].coor);
 
@@ -2139,6 +2197,10 @@
 
                 let currentHeroIndex = determineWhichHero(adjacentHeroCoors[0]);
 
+                console.log("In do enemy moves.  EnemyIndex = ", enemyIndex);
+
+                console.log("Calling enemyattack hero from doenemymoves");
+
                 enemyAttackHero(heroArray[currentHeroIndex], enemyArray[enemyIndex]);
 
             }
@@ -2179,6 +2241,9 @@
         return currentClosest;
     }
 
+    function stupid() {
+
+    }
 
 
     function enemyAttackHero(hero, enemySprite) {
@@ -2191,6 +2256,10 @@
         } else {
             enemySprite.anims.play('barbAttack');
         }
+
+        console.log("In enemyAttack hero function.  enemyIndex = ", enemyIndex);
+
+        enemyArray[enemyIndex].once('animationcomplete', attackComplete);
     }
 
     function pickHexAdjacentHerotoMoveTo(heroPos, enemyPos) {
@@ -2314,20 +2383,30 @@
         console.log("path = ", path);
 
         let currentEnemyCoor = calculateCoordinates(path[0]);
-        var enemyTween;
+        let enemyTween;
                                // let currentIndex = 0;
 
+        console.log("AAAA made it here");
+
         if (enemySprite.x > currentEnemyCoor[0]) {
+
+            console.log("BBBB");
             enemySprite.anims.play('barbWalkLeft');
         } else {
+
+            console.log("CCCC");
             enemySprite.anims.play('barbWalk');
         }
+
+        console.log("Calling submovetonext hex from enemymovetonexthex");
 
         subMoveToNextHex();
 
         function subMoveToNextHex() {
 
             index++;
+
+            console.log("This is right before playertween begins.");
 
             playerTween = selfScene.tweens.add({
                 targets: enemySprite,
@@ -2336,7 +2415,7 @@
                 duration: 400,
                 onComplete: function() {
 
-                //console.log("Got over heeeeeereeeee");
+                console.log("Got over heeeeeereeeee");
 
                     if (index < path.length) {
 
@@ -2349,6 +2428,8 @@
                         } else {
                             enemySprite.anims.play('barbWalk');
                         }
+
+                        console.log("Calling submovetonext hex from submovetonexthex");
 
                         subMoveToNextHex();
 
@@ -2370,6 +2451,8 @@
                             console.log("enemysprite.indexofherotobeattacked = ", enemySprite.indexOfHeroToBeAttacked);
                             console.log("enemy sprite hit points = ", enemySprite.hitPoints);
 
+                            console.log("Calling enemyAttackhero from  enemymovetonexthex");
+
                             enemyAttackHero(heroArray[enemySprite.indexOfHeroToBeAttacked], enemySprite);
                         } else {
 
@@ -2379,10 +2462,14 @@
 
                             //  console.log("enemyIndex = ", enemyIndex);
                             //  console.log("enemyArray.lenght = ", enemyArray.length);
+
+                            console.log("Calling doenemymoves from enemymovetonexthex");
                                 doEnemyMoves();
                             } else {
                                 enemyIndex = 0;
                                 playersTurn = true;
+
+                              //  enemyArray[enemyIndex].on('animationcomplete', stupid);
 
                             }
                         }
