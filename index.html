@@ -24,7 +24,7 @@
 
                 setBounds: {
                     width: 3000,
-                    height: 600
+                    height: 3000
                 },
                 gravity: { y: 0 },
                 debug: false
@@ -37,6 +37,7 @@
         }
     };
 
+    let crap;
     let hasClickedOnce = false;
     let player;
     let objectIsSelected = false;
@@ -109,7 +110,9 @@
     function preload ()
     {
 
-        this.load.image('rightArrow', 'assets/right.jpg');
+
+        this.load.image('tank1', 'assets/tank1.png');
+        this.load.image('upArrow', 'assets/upArrow.png');
 
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/platform.png');
@@ -117,7 +120,7 @@
         this.load.image('bomb', 'assets/bomb.png');
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('spark', 'assets/blue.png');
-        this.load.image('levelOne', 'assets/grid5.png');
+        this.load.image('levelOne', 'assets/grid6.png');
 
         this.load.image('idle1', 'assets/idle1.png');
         this.load.image('idle2', 'assets/idle2.png');
@@ -239,17 +242,23 @@
 
     function create ()
     {
+        crap = this;
+       // this.cameras.main.scrollY = 400;
+
         starGroup = this.add.group();
-        this.add.image(596, 316, 'levelOne');
+        this.add.image(596, 686, 'levelOne');
 
-        let rArrow = this.add.sprite(700, 400, 'rightArrow').setInteractive();
-        rArrow.setScale(0.3);
+        let tankOne = this.add.sprite(350, 350, 'tank1');
+        tankOne.rotation = 3.14 / 4;
+        tankOne.setScale(0.5);
 
-        rArrow.on('pointerdown', function (pointer) {
+        let upArrow = this.add.sprite(700, 400, 'upArrow').setInteractive();
 
-            console.log("Right arrow pressed!!");
+        let downArrow = this.add.sprite(800, 400, 'upArrow').setInteractive();
+        downArrow.rotation = 3.14;
 
-            });
+
+
 
         let startingCoordinates = calculateCoordinates([heroCoor[0], heroCoor[1]]);
         let heroBStartCoor = calculateCoordinates([heroBCoor[0], heroBCoor[1]]);
@@ -261,6 +270,24 @@
         {
             gameObject.emit('clicked', gameObject);
         }, this);
+
+        upArrow.on('pointerdown', function (pointer) {
+
+            console.log("Up arrow pressed!!");
+
+            crap.cameras.main.scrollY = 0;
+
+            });
+
+        downArrow.on('pointerdown', function(pointer) {
+
+            console.log("Down arrow pressed!");
+            crap.cameras.main.scrollY = 300;
+        });
+
+
+
+
 
         this.anims.create({
             key: 'left',
@@ -515,8 +542,16 @@
 
         //let heroSelectedHex;
 
+
+
         this.input.on('pointerdown', function (pointer)
         {
+
+
+            console.log("this = ", this);
+
+          //  theScene = this;
+/*
             if (hasClickedOnce) {
                 this.cameras.main.scrollX = 0;
             }
@@ -526,8 +561,14 @@
 
             }
 
+
+
         }, this);
-/*
+
+*/
+
+           // this.cameras.main.scrollY = 300;
+
             let hexClicked = determineWhichHex(pointer.x, pointer.y);
 
             if (playersTurn) {
@@ -730,7 +771,7 @@
             console.log("spaz", pointer.x, pointer.y);
 
         }, this);
-*/
+
     }
 
     function update ()  {
