@@ -37,6 +37,7 @@
         }
     };
 
+    let scrollYAmount = 0;
     let crap;
     let hasClickedOnce = false;
     let player;
@@ -113,6 +114,7 @@
 
         this.load.image('tank1', 'assets/tank1.png');
         this.load.image('upArrow', 'assets/upArrow.png');
+        this.load.image('panel', 'assets/panel.png');
 
         this.load.image('sky', 'assets/sky.png');
         this.load.image('ground', 'assets/platform.png');
@@ -248,14 +250,23 @@
         starGroup = this.add.group();
         this.add.image(596, 686, 'levelOne');
 
+        let rightPanel = this.add.sprite(1110, 290, 'panel');
+        rightPanel.setScrollFactor(0);
+        rightPanel.setDepth(4);
+
         let tankOne = this.add.sprite(350, 350, 'tank1');
         tankOne.rotation = 3.14 / 4;
         tankOne.setScale(0.5);
 
-        let upArrow = this.add.sprite(700, 400, 'upArrow').setInteractive();
+        let upArrow = this.add.sprite(1120, 300, 'upArrow').setInteractive();
+        upArrow.setScrollFactor(0);
+        upArrow.setDepth(5);
 
-        let downArrow = this.add.sprite(800, 400, 'upArrow').setInteractive();
+        let downArrow = this.add.sprite(1110, 400, 'upArrow').setInteractive();
         downArrow.rotation = 3.14;
+        downArrow.setDepth(5);
+        downArrow.setScrollFactor(0);
+
 
 
 
@@ -275,14 +286,20 @@
 
             console.log("Up arrow pressed!!");
 
-            crap.cameras.main.scrollY = 0;
+            if (scrollYAmount > 0) {
 
-            });
+                crap.cameras.main.scrollY = scrollYAmount - 86;
+                scrollYAmount -= 86;
+
+            }
+
+        });
 
         downArrow.on('pointerdown', function(pointer) {
 
             console.log("Down arrow pressed!");
-            crap.cameras.main.scrollY = 300;
+            crap.cameras.main.scrollY = scrollYAmount + 86;
+            scrollYAmount += 86;
         });
 
 
@@ -2089,6 +2106,7 @@
     }
 
     function enemyFinishedDying(sprite) {
+        console.log("EnemeyFinishedDying has just been called!!!")
         doEnemyMoves();
     }
 
@@ -2117,8 +2135,8 @@
         }
 
 
-        console.log("Indo enemey  moevs.  enemyIndex = ", enemyIndex);
-        console.log("Indo enemy mooevs.  enemyArray.length - 1 = ", enemyArray.length - 1);
+        console.log("In do enemy moves.  enemyIndex = ", enemyIndex);
+        console.log("In do enemy moves.  enemyArray.length - 1 = ", enemyArray.length - 1);
 
                               //  for (let i = 0; i < enemyArray.length; i++) {
         if (enemyIndex > enemyArray.length - 1) {
